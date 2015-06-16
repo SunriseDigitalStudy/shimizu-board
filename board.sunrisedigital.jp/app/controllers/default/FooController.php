@@ -102,4 +102,44 @@ class FooController extends Sdx_Controller_Action_Http
 //      この結果はまだentryにレコードがないのでSQLだけ確認
       $list = $t_account->fetchAll($select);
   }
+  public function  ormUpdateAction()
+  {
+      $this->_disableViewRenderer();
+      
+//      テーブルクラスの取得
+      $t_account = Bd_Orm_Main_Account::createTable();
+      
+//      主キー1のレコードを更新
+      $account = $t_account->findByPKey(6);
+      
+      $account->setPassword('updated_password_'.date('Y-m-d H:i:s'));
+      
+      $db = $account->updateConnection();
+      
+      $db->beginTransaction();
+      $account->save();
+      $db->commit();
+      
+//      取得して確認
+      Sdx_Debug::dump($db->query("select * from account")->fetchAll(),'title');
+  }
+  public function ormDeleteAction()
+  {
+      $this->_disableViewRenderer();
+      
+//      テーブルクラスの取得
+      $t_account = Bd_Orm_Main_Account::createTable();
+//      主キー1のレコードを取得
+      $account = $t_account->findByPkey(6);
+      
+      $db = $account->updateConnection();
+      
+      $db->beginTransaction();
+      $account->delete();
+      $db->commit();
+      
+//      取得して確認
+      Sdx_Debug::dump($db->query("select * from account")->fetchAll(),'title');
+  }
+  
 }
