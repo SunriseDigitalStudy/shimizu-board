@@ -1,0 +1,26 @@
+## YAML Template.
+---
+#　レコードクラス名
+model: Bd_Orm_Main_Tag
+#　ページのタイトル、h2タグ、各見出しに使用されるテキスト
+page_name: タグ
+
+# 入力フォームの設定
+form:
+    fields:
+        id:
+            setting:
+                label: ID
+        name:
+            settings:
+                label: 名称
+# 一覧リスト用の設定               
+list:
+#   リストに表示する項目
+    display:
+       - label: ID
+         column: id
+         
+       - label: 名称
+         column: name
+            
