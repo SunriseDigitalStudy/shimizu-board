@@ -23,4 +23,13 @@ list:
          
        - label: 名称
          column: name
-            
+         
+list:
+    delete_label: 削除
+    method: fetchAllNewerOrdered
+    display:
+        - label: ID
+          column: id
+          
+        - label: 名称
+          column: name
