@@ -10,7 +10,7 @@ database_name:
 board_master:
   class:    Sdx_Db_Adapter_Mysql
   host:     localhost
-  username: board-admin
+  username: test1
   password: test
   dbname:   board
   charset:  utf8

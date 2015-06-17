@@ -1,5 +1,5 @@
 drop schema if exists `board` ;
-create schema if not exists `board` default characther set utf8 collate utf8_general_ci;
+create schema if not exists `board` default character set utf8 collate utf8_general_ci;
 use `board`;
 
 -- table `board`.`genre`
@@ -40,6 +40,7 @@ engine = InnoDB;
 create table if not exists `board`.`entry` (
 `id` int not null auto_increment ,
 `thread_id` int not null ,
+`account_id` int not null ,
 `body` varchar(255) not null ,
 `updated_at` datetime not null ,
 `create_at` datetime not null ,
@@ -47,15 +48,15 @@ primary key(`id`) ,
 index `fk_entry_thread_idx` (`thread_id` ASC ) ,
 index `fk_entry_account1_idx` (`account_id` ASC ) ,
 constraint `fk_entry_thread`
-foreign key(`thread_id`)
-references `board`.`thread`
-on delete cascade
-on update restrict ,
+ foreign key(`thread_id`)
+ references `board`.`thread`(`id`)
+ on delete cascade
+ on update restrict ,
 constraint `fk_entry_account1`
-foreign key(`account_id`)
-references `board`.`account` (`id`)
-on delete cascade
-on update restrict)
+ foreign key(`account_id`)
+ references `board`.`account` (`id`)
+ on delete cascade
+ on update restrict)
 engine = InnoDB;
 
 -- Table`board`.`auto_login`
@@ -64,12 +65,12 @@ create table if not exists `board`.`auto_login` (
 `account_id` int not null ,
 `expire_date` datetime not null ,
 primary key (`hash`) ,
-index `fk_auto_login_account1_login` (`account` ASC ) ,
+index `fk_auto_login_account1_login` (`account_id` ASC ) ,
 constraint `fk_auto_login_account1`
-foreign key (`account_id`)
-references `board`.`account` (`id`)
-on delete cascade
-on update restrict)
+ foreign key (`account_id`)
+ references `board`.`account` (`id`)
+ on delete cascade
+ on update restrict)
 engine = InnoDB;
 
 -- Table `board`.`tag`
