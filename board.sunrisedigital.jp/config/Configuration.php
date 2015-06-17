@@ -11,6 +11,7 @@ require_once Sdx_Context::getInstance()->getConfig()->get('sys.context_dir').'/m
 
 class Configuration extends Bd_Configuration
 {	
+//    Sdx_Contextクラス=リクエスト全体を表現したクラス
 	protected function _initHttp(Sdx_Context $context)
 	{
 		parent::_initHttp($context);
@@ -19,6 +20,6 @@ class Configuration extends Bd_Configuration
 		//$context->registerAutoloadNamespace('Other');
 		
 		//If you want to enable access control, Remove this comment out.
-		//$context->registerControllerPlugin(new Sdx_Controller_Plugin_AccessControl());
+		$context->registerControllerPlugin(new Sdx_Controller_Plugin_AccessControl());
 	}
 }

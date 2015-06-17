@@ -1,0 +1,14 @@
+SDX_EXTEND: acl/settings
+
+# 認証、承認に失敗したときにどのページにフォワードするかの指定
+forward:
+# 認証
+  authentication:
+    module:     default
+    controller: secure
+    action:     login
+#　承認
+  authorization:
+    module:     default
+    controller: secure
+    action:     deny
