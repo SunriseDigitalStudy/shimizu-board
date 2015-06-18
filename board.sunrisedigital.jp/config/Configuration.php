@@ -24,8 +24,11 @@ protected function _initHttp(Sdx_Context $context)
  
     //NotificationCenterを取得
     $nc = $context->getNotificationCenter();
+//    ログイン時のイベント
     $nc->addObserver(Sdx_User::NTF_LOGIN, array($this, 'login'));
+//    ログインした状態でSdx_Userが生成されたときに呼ばれるイベント
     $nc->addObserver(Sdx_User::NTF_CREATE_WITH_IDENTITY, array($this, 'login'));
+//    ログアウト時のイベント
     $nc->addObserver(Sdx_User::NTF_BEFORE_LOGOUT, array($this, 'logout'));
   }
  
