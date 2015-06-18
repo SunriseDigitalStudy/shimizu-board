@@ -2,7 +2,7 @@
 <html lang="ja">
     <head>
         <meta charset="UTF-8">
-        <link rel="stylesheet" href="//netdna.bootstrapcdn/bootstrap/3.0.0/css/bootstrap.min.css">
+        <link rel="stylesheet" href="https://maxcdn.bootstrapcdn.com/bootstrap/3.3.5/css/bootstrap.min.css">
         <link href="//netdna.bootstrapcdn.com/font-awesome/4.0.1/css/font-awesome.css" rel="stylesheet">
         <style>
             .sdx_error{
