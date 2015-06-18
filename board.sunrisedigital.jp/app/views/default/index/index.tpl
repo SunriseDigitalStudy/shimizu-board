@@ -1,1 +1,1 @@
-default index
+{extends file='default/base.tpl'}

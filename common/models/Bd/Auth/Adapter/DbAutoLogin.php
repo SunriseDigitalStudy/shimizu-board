@@ -45,6 +45,7 @@ class Bd_Auth_Adapter_DbAutoLogin extends Sdx_Auth_Adapter_Db2
     return array(
       'id' => $account->getId(),
       'login_id' => $account->getLoginId(),
+      'name'=>$account->getName(),
     );
   }
 }
