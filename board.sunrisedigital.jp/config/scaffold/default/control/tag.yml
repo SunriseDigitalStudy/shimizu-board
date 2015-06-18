@@ -26,6 +26,7 @@ list:
          
 list:
     delete_label: 削除
+#    Bd_Orm_Main_Table_TagクラスのfetchAllNewerOrderedメソッドの呼び出し
     method: fetchAllNewerOrdered
     display:
         - label: ID
