@@ -53,7 +53,7 @@ class Bd_Controller_Plugin_AutoLogin extends Sdx_Controller_Plugin_AutoLogin {
            ->setAccountId($record->getId()) //ユーザー名のセット
            ->setExpireDate($today->addSecond($this->_cookie_expire)->toString("yyyy-MM-dd HH:mm:ss"));
         
-        $al->beginTransction();
+        $al->beginTransaction();
         try
         {
             $al->save();
