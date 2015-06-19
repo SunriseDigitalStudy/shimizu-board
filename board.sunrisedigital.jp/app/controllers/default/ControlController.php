@@ -42,7 +42,7 @@ class ControlController extends Sdx_Controller_Action_Http {
 //        )
 //        ORDER BY
 //        `entry`.`created_at` DESC
-//        Entryテーブルの生成
+//        entryテーブルの生成
         $t_entry = Bd_Orm_Main_Entry::createTable();
         $sb_entry = $t_entry->createSelectBuilder();
 
@@ -81,9 +81,9 @@ class ControlController extends Sdx_Controller_Action_Http {
     }
 
 //    Sdx_Db_Select_Builder_Contextクラスを使用してJOINするテスト用アクション
-    public function joinbuilderAction() {
+    public function joinBuilderAction() {
         $this->_disableViewRenderer();
-//        Entryテーブルの生成
+//        entryテーブルの生成
         $t_entry = Bd_Orm_Main_Entry::createTable();
         $sb_entry = $t_entry->createSelectBuilder();
 
@@ -101,20 +101,94 @@ class ControlController extends Sdx_Controller_Action_Http {
     }
 
 //    Sdx_Db_Selectクラスを使用してJOINするテスト用アクション
-    public function joinselectAction() {
+    public function joinSelectAction() {
         $this->_disableViewRenderer();
-        
+
         $t_entry = Bd_Orm_Main_Entry::createTable();
 //        thread/genre両テーブルをJOIN。返り値には配列で書くSdx_Db_Tableのインスタンスが返る
-        list($t_thread,$t_genre) = $t_entry->innerJoin('Thread','Genre');
+        list($t_thread, $t_genre) = $t_entry->innerJoin('Thread', 'Genre');
         list($_thread_tag) = $t_thread->innerJoin('ThreadTag');
-        
+
         $select = $t_entry->select();
         $select
-           ->addWhere('tag_id',array(2,3),$_thread_tag)
-           ->order($t_genre->appendAlias('sequence DESC'));
-        
+                ->addWhere('tag_id', array(2, 3), $_thread_tag)
+                ->order($t_genre->appendAlias('sequence DESC'));
+
         $list = $t_entry->fetchAll($select);
     }
 
+    public function changeJoinAction() {
+        $this->_disableViewRenderer();
+
+        $t_entry = Bd_Orm_Main_Base_Entry::createTable();
+        $sb_entry = $t_entry->createSelectBuilder();
+        $sb_entry->account->innerJoin('%%left%%.account_id = %%right%%.id AND %%left%%.thread_id = 2');
+
+        $select = $sb_entry->build();
+
+        $list = $t_entry->fetchAll($select);
+    }
+
+    public function groupAction() {
+        $this->_disableViewRenderer();
+
+        $t_entry = Bd_Orm_Main_Base_Entry::createTable();
+        $sb_entry = $t_entry->createSelectBuilder();
+        
+//      entry.account_idでGROUP BYをする  
+        $sb_entry->group('account_id');
+//       
+        $sb_entry->builder()->formatHaving(
+//      配列で:count_entry_idに2を渡す
+                'Count({entry}.id)>=:count_entry_id', array(':count_entry_id' => 2)
+        );
+
+        $select = $sb_entry->build();
+
+        $list = $t_entry->fetchAll($select);
+    }
+    public function whereBuilderAction()
+    {
+        $this->_disableViewRenderer();
+        
+        $t_entry = Bd_Orm_Main_Entry::createTable();
+        $sb_entry = $t_entry->createSelectBuilder();
+//        INNERJOIN
+        $sb_entry->account->innerJoin();
+
+        $sb_entry->builder()->format(
+//        配列でthread_id,like1に1、fooを渡す
+                '{entry}.thread_id = :thread_id AND ({account}.name LIKE :like_1 OR {account}.name LIKE :like_1)',
+//        like2にbarが渡されるかのテストコード
+//                '{entry}.thread_id = :thread_id AND ({account}.name LIKE :like_1 OR {account}.name LIKE :like_2)',
+                array(':thread_id' =>1,':like_1' => '%foo%',':like_2' => '%bar%',)
+                );
+        $select = $sb_entry->build();
+        
+        $list = $t_entry->fetchAll($select);
+    }
+    public function subqueryAction()
+    {
+        $this->_disableViewRenderer();
+        
+        $t_entry = Bd_Orm_Main_Entry::createTable();
+        $sb_entry = $t_entry->createSelectBuilder();
+        $sb_entry->account->innerJoin();
+        
+        $sb_entry
+            ->addWhere('thread_id',array(2,3));
+//        サブクエリJOINのため一旦Sdx_Db_Selectを生成する
+        $select = $sb_entry->build();
+        
+//        サブクエリ用のSdx_Db_Selectを新たに生成
+        $sub_sel = Bd_Orm_Main_Entry::createTable()->select()
+           ->group('id')
+           ->setColumns(array('max_id'=>'MAX(id)'));
+//        JOINする
+        $select->joinInner(
+                array('sub_entry' => new Zend_Db_Expr('('.$sub_sel->assemble().')')),
+                'sub_entry.max_id = '.$sb_entry->table()->appendAlias('account_id')
+                );
+        $list = $t_entry->fetchAll($select);
+    }
 }
