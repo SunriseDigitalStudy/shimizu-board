@@ -4,7 +4,7 @@ require_once 'Bd/Orm/Main/Base/Form/Thread.php';
 
 class Bd_Orm_Main_Form_Thread extends Bd_Orm_Main_Base_Form_Thread {
 
-//    オーバーロード
+//    オーバーライド
     public static function createGenreIdElement() {
         $elem = new Sdx_Form_Element_Group_Select(array('name' => 'genre_id'));
         $select = Bd_Orm_Main_Genre::getTable()->getSelect()
