@@ -134,12 +134,24 @@ class ControlController extends Sdx_Controller_Action_Http {
 
         $t_entry = Bd_Orm_Main_Base_Entry::createTable();
         $sb_entry = $t_entry->createSelectBuilder();
-        
-//      entry.account_idでGROUP BYをする  
+
+//        SELECT
+//        `entry`.`id`,
+//        `entry`.`thread_id`,
+//        `entry`.`account_id`,
+//        `entry`.`body`,
+//        `entry`.`updated_at`,
+//        `entry`.`created_at`
+//        FROM
+//        `entry`
+//        GROUP BY
+//        `entry`.`account_id`
+//        HAVING(
+//        COUNT(`entry`.id) >= 2
+//        )
         $sb_entry->group('account_id');
-//       
         $sb_entry->builder()->formatHaving(
-//      配列で:count_entry_idに2を渡す
+//              配列で:count_entry_idに2を渡す
                 'Count({entry}.id)>=:count_entry_id', array(':count_entry_id' => 2)
         );
 
@@ -155,12 +167,11 @@ class ControlController extends Sdx_Controller_Action_Http {
         $sb_entry = $t_entry->createSelectBuilder();
 //        INNERJOIN
         $sb_entry->account->innerJoin();
-
-        $sb_entry->builder()->format(
 //        配列でthread_id,like1に1、fooを渡す
-                '{entry}.thread_id = :thread_id AND ({account}.name LIKE :like_1 OR {account}.name LIKE :like_1)',
-//        like2にbarが渡されるかのテストコード
-//                '{entry}.thread_id = :thread_id AND ({account}.name LIKE :like_1 OR {account}.name LIKE :like_2)',
+        $sb_entry->builder()->format(
+//                '{entry}.thread_id = :thread_id AND ({account}.name LIKE :like_1 OR {account}.name LIKE :like_1)',
+//                like2にbarが渡されてるかのテストコード
+                '{entry}.thread_id = :thread_id AND ({account}.name LIKE :like_1 OR {account}.name LIKE :like_2)',
                 array(':thread_id' =>1,':like_1' => '%foo%',':like_2' => '%bar%',)
                 );
         $select = $sb_entry->build();
@@ -190,5 +201,9 @@ class ControlController extends Sdx_Controller_Action_Http {
                 'sub_entry.max_id = '.$sb_entry->table()->appendAlias('account_id')
                 );
         $list = $t_entry->fetchAll($select);
+    }
+    public function __call($name, $arguments) {
+        $this->_helper->scaffold->setViewRendererPath('default/control/scaffold.tpl');
+        $this->_helper->scaffold->run();
     }
 }
