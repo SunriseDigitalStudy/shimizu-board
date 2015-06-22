@@ -8,7 +8,7 @@ form:
     sequence:
         #カラム名を指定
         column: sequence
-        direction: DESC
+        direction: ASC
         
     fields:
         id:
@@ -20,8 +20,17 @@ form:
          
 list:
    display:
+       - label: <i class="fa fa-edit"></i>編集
+         action: edit
+       
        - label: ID
          column: id
          
        - label: タイトル
          column: name
+         
+       - label: スレッド編集
+         html: <a href="/control/thread?group=%record:id%">スレッド編集<i class="fa fa-chevron-right"></i></a>
+         
+       - label: 削除
+         action: delete
