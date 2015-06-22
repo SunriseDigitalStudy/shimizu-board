@@ -9,7 +9,6 @@
 
 {block css append}
     {*cssのinclude　必須*}
-    {include 'sdx/include/scaffold/css.tpl'}
 <link rel="stylesheet" type="text/css" href="/css/sdx/scaffold.bootstrap.css">
 {/block}
 

@@ -1,0 +1,27 @@
+## YAML Template.
+---
+         
+model: Bd_Orm_Main_Genre
+page_name: ジャンル
+
+form:
+    sequence:
+        #カラム名を指定
+        column: sequence
+        direction: DESC
+        
+    fields:
+        id:
+           settings:
+             label: ID
+           name:
+             settings:
+               lavel: タイトル
+         
+list:
+   display:
+       - label: ID
+         column: id
+         
+       - label: タイトル
+         column: name
