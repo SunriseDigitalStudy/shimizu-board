@@ -159,10 +159,10 @@ class ControlController extends Sdx_Controller_Action_Http {
 
         $list = $t_entry->fetchAll($select);
     }
-    public function whereBuilderAction()
-    {
+
+    public function whereBuilderAction() {
         $this->_disableViewRenderer();
-        
+
         $t_entry = Bd_Orm_Main_Entry::createTable();
         $sb_entry = $t_entry->createSelectBuilder();
 //        INNERJOIN
@@ -171,47 +171,105 @@ class ControlController extends Sdx_Controller_Action_Http {
         $sb_entry->builder()->format(
 //                '{entry}.thread_id = :thread_id AND ({account}.name LIKE :like_1 OR {account}.name LIKE :like_1)',
 //                like2にbarが渡されてるかのテストコード
-                '{entry}.thread_id = :thread_id AND ({account}.name LIKE :like_1 OR {account}.name LIKE :like_2)',
-                array(':thread_id' =>1,':like_1' => '%foo%',':like_2' => '%bar%',)
-                );
+                '{entry}.thread_id = :thread_id AND ({account}.name LIKE :like_1 OR {account}.name LIKE :like_2)', array(':thread_id' => 1, ':like_1' => '%foo%', ':like_2' => '%bar%',)
+        );
         $select = $sb_entry->build();
-        
+
         $list = $t_entry->fetchAll($select);
     }
-    public function subqueryAction()
-    {
+
+    public function subqueryAction() {
         $this->_disableViewRenderer();
-        
+
         $t_entry = Bd_Orm_Main_Entry::createTable();
         $sb_entry = $t_entry->createSelectBuilder();
         $sb_entry->account->innerJoin();
-        
+
         $sb_entry
-            ->addWhere('thread_id',array(2,3));
+                ->addWhere('thread_id', array(2, 3));
 //        サブクエリJOINのため一旦Sdx_Db_Selectを生成する
         $select = $sb_entry->build();
-        
+
 //        サブクエリ用のSdx_Db_Selectを新たに生成
         $sub_sel = Bd_Orm_Main_Entry::createTable()->select()
-           ->group('id')
-           ->setColumns(array('max_id'=>'MAX(id)'));
+                ->group('id')
+                ->setColumns(array('max_id' => 'MAX(id)'));
 //        JOINする
         $select->joinInner(
-                array('sub_entry' => new Zend_Db_Expr('('.$sub_sel->assemble().')')),
-                'sub_entry.max_id = '.$sb_entry->table()->appendAlias('account_id')
-                );
+                array('sub_entry' => new Zend_Db_Expr('(' . $sub_sel->assemble() . ')')), 'sub_entry.max_id = ' . $sb_entry->table()->appendAlias('account_id')
+        );
         $list = $t_entry->fetchAll($select);
     }
-    
+
     public function __call($name, $arguments) {
         $this->_helper->scaffold->setViewRendererPath('default/control/scaffold.tpl');
         $this->_helper->scaffold->run();
     }
+
+    public function threadAction() {
+        $this->_helper->scaffold->setViewRendererPath('default/control/scaffold.tpl');
+
+        $this->_helper->scaffold->setHook(Sdx_Controller_Action_Helper_Scaffold::HOOK_CREATE_FORM, array($this, 'hookCreateForm'));
+
+        $this->_helper->scaffold->setHook(Sdx_Controller_Action_Helper_Scaffold::HOOK_BIND_FORM, array($this, 'hookBindForm'));
+
+        $this->_helper->scaffold->setHook(Sdx_Controller_Action_Helper_Scaffold::HOOK_BIND_PARAMS_TO_FORM, array($this, 'hookBindParamsToForm'));
+        
+        $this->_helper->scaffold->setHook(Sdx_Controller_Action_Helper_Scaffold::HOOK_BEFORE_RECORD_SAVE, array($this, 'hookBeforeRecordSave'));
+
+        $this->_helper->scaffold->setHook(Sdx_Controller_Action_Helper_Scaffold::HOOK_OPTIONAL_VALIDATE, array($this, 'hookOptionalValidate'));
+
+        $this->_helper->scaffold->setHook(Sdx_Controller_Action_Helper_Scaffold::HOOK_AFTER_RECORD_SAVE, array($this, 'hookAfterRecordSave'));
+
+        $this->_helper->scaffold->setHook(Sdx_Controller_Action_Helper_Scaffold::HOOK_LIST_SELECT_BUILDER, array($this, 'hookListSelectBuilder'));
+
+        $this->_helper->scaffold->setHook(Sdx_Controller_Action_Helper_Scaffold::HOOK_LIST_SELECT, array($this, 'hookListSelect'));
+
+        $this->_helper->scaffold->run();
+    }
+
+    public function hookCreateForm($params) {
+        Sdx_Debug::dump($params, 'hookCreateForm');
+    }
+
+    public function hookBindForm($params) {
+        $params['bind']['values'] = $params['record']->getSomeList()->toSimpleArray('value');
+    }
+
+    public function hookBindParamsToForm($params) {
+        Sdx_Debug::dump($params, 'hookBindParamsToForm');
+    }
+
+    public function hookBeforeRecordSave($params) {
+        Sdx_Debug::dump($params, 'hookBeforeRecordSave');
+    }
+
+    public function hookOptionalValidate($params) {
+        Sdx_Debug::dump($params, hookOptionalValidate);
+    }
+
+    public function hookAfterRecordSave($params) {
+        Sdx_Debug::dump($params, 'hookAfterRecordSave');
+    }
+
+    public function hookListSelectBuilder($params) {
+        Sdx_Debug::dump($params, 'hookListSelectBuilder');
+    }
+
+    public function hookListSelect($params) {
+        Sdx_Debug::dump($params, 'hookListSelect');
+    }
+    public function genreListAction()
+    {
+        $this->_helper->scaffold->setViewRendererPath('default/control/scaffold.tpl');
+//      リスト画面のみを起動する（編集画面のURL,設定名）  
+        $this->_helper->scaffold->runList('/control/genre-edit', 'scaffold/default/control/genre');
+    }
     
-//    public function threadAction()
-//    {
-//        $this->_helper->scaffold->setViewRendererPath('default/control/scaffold.tpl');
-//        $this->_helper->setGroupValue($this->_getParam('genre_id'));
-//        $this->_helper->scaffold->run();
-//    }
+    public function genreEditAction()
+    {
+        $this->_helper->scaffold->setViewRendererPath('default/control/scaffold.tpl');
+//      編集画面を起動する（リスト画面のURL,設定名）  
+        $this->_helper->scaffold->runEdit('/control/genre-list', 'scaffold/default/control/genre');
+    }
 }
