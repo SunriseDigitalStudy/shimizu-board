@@ -205,10 +205,6 @@ class ControlController extends Sdx_Controller_Action_Http {
     
     public function __call($name, $arguments) {
         $this->_helper->scaffold->setViewRendererPath('default/control/scaffold.tpl');
-//        $config_name = $config_name = sprintf('scaffold/%s/%s/%s', $this->_getParam('module'), $this->_getParam('controller'), $this->_getParam('action'));
-//        Sdx_Debug::dump(Sdx_Context::getInstance()->getConfig()->cloneWithNamespace($config_name)->get('form.sequence'));
-//        exit();        
-        
         $this->_helper->scaffold->run();
     }
 }
