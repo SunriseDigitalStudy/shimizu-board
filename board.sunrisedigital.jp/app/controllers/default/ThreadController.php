@@ -18,8 +18,20 @@ Class ThreadController extends Sdx_Controller_Action_Http
         Sdx_Debug::dump($this->_getParam('thread_id'),'title');
     }
     
-         public function deleteAction()
+     public function deleteAction()
     {
         Sdx_Debug::dump($this->_getParam('thread_id'),'title');
+    }
+    
+    public function menuAction()
+    {
+        $t_genre = Bd_Orm_Main_Genre::createTable();
+        $select = $t_genre->select();
+        $select ->resetColumns()
+                ->addColumns('name');
+        $list = $t_genre->fetchAll($select);
+        
+        Sdx_Debug::dump($list->toArray(),'title');
+        $this->view->assign('list',$list->toArray());     
     }
 }
