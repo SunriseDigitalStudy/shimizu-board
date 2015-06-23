@@ -1,0 +1,9 @@
+## YAML Template.
+---
+model: Bd_Orm_Main_Genre
+page_name: ジャンル一覧
+
+list:
+    display:
+      - label: ジャンル名
+      - column: name
