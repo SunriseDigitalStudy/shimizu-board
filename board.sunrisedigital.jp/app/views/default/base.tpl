@@ -2,7 +2,7 @@
 <html lang="ja">
     <head>
         <meta charset="UTF-8">
-        <link rel="stylesheet" href="https://maxcdn.bootstrapcdn.com/bootstrap/3.3.5/css/bootstrap.min.css">
+        <link rel="stylesheet" href="//netdna.bootstrapcdn.com/bootstrap/3.0.0/css/bootstrap.min.css">
         <link href="//netdna.bootstrapcdn.com/font-awesome/4.0.1/css/font-awesome.css" rel="stylesheet">
         <style>
             .sdx_error{
@@ -19,10 +19,10 @@
             }
         </style>
     {block css}{/block}
-<sclipt src="//ajax.googleapis.com/ajax/libs/jquery/1.10.2/jquery.min.js"></sclipt>
+<script src="//ajax.googleapis.com/ajax/libs/jquery/1.10.2/jquery.min.js"></script>
 <script src="//netdna.bootstrapcdn.com/bootstrap/3.0.0/js/bootstrap.min.js"></script>
 {block js}{/block}
-<title>Board {block title}{/block}</title>
+<title>{block title}Board{/block}</title>
 </head>
 <body>
     <header class="navbar navbar-inverse">{$sdx_user = $sdx_context->getUser()}
