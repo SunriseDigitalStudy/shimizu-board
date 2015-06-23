@@ -1,0 +1,8 @@
+## YAML Template.
+---
+SDX_EXTEND: acl/default/settings
+
+secure: true
+# 利用するクラス
+acl_list:
+    - Bd_Acl_Login
