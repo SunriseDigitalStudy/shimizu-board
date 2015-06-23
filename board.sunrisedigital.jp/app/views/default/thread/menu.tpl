@@ -8,7 +8,7 @@
         <div class="panel-body">  
     {foreach from=$list item=genre}
         <ul>
-            <li>{$genre}</li>
+            <li>{$genre->getName()}</li>
         </ul>
     {/foreach}
     </div>  

@@ -31,7 +31,7 @@ Class ThreadController extends Sdx_Controller_Action_Http
                 ->addColumns('name');
         $list = $t_genre->fetchAll($select);
         
-        Sdx_Debug::dump($list->toArray(),'title');
-        $this->view->assign('list',$list->toArray());     
+        Sdx_Debug::dump($list->getFirstRecord(),'title');
+        $this->view->assign('list',$list);
     }
 }
