@@ -1,10 +1,5 @@
-<!DOCTYPE html>
-<html>
-	<head>
-		<meta charset="UTF-8">
-		<title>Secure Signout</title>
-	</head>
-	<body>
-		<div class="alert alert-success">ログアウトしました</div>
-	</body>
-</html>
+{extends file='default/base.tpl'}
+{block title append}logout{/block}
+{block main_contents}
+    ログアウトしました
+{/block}
