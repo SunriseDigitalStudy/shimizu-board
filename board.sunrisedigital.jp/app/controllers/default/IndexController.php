@@ -13,19 +13,8 @@ class IndexController extends Sdx_Controller_Action_Http {
     public function indexAction() {
         $form = new Sdx_Form();
         $form
-            ->setActionCurrentPage()
+            ->setAction("/thread/menu")
             ->setMethodToPost();
-        
-//      login_id
-        $t_account = Bd_Orm_Main_Account::createTable();
-        $elem = new Sdx_Form_Element_Text();
-        $elem->setName('login_id');
-        $form->setElement($elem);
-        
-//      password  
-        $elem = new Sdx_Form_Element_Password();
-        $elem->setName('password');
-        $form->setElement($elem);
         
         $this->view->assign('form' , $form);
     }
