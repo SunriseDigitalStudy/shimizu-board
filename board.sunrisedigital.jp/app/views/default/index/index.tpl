@@ -5,7 +5,7 @@
     <div class="text center">
         <div class="panel-body">
             {$form->renderStartTag() nofilter}
-            {*仮の入口ボタンの作成*}
+            {*とりあえず仮のボタンの作成*}
             <input type="submit" name="door" value="入口" class="btn btn-primary">
         </div>
     </form>
