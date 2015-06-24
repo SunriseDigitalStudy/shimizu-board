@@ -26,9 +26,9 @@ form:
         settings: 
           label: ID
         
-    title:
-      settings:
-        label: タイトル
+      title:
+        settings:
+          label: タイトル
 #        write_onry: true
 #        setter: raw_password
 #        empty_value: 0
@@ -37,16 +37,16 @@ form:
 #            -複数指定可能
 #            -一つでも配列にする
             
-    genre_id:
-      settings: 
-        label: ジャンル
+      genre_id:
+        settings: 
+          label: ジャンル
     
     #多対多のリレーションをorm.ymlに設定するとFormクラスにcreateMM～メソッドが生成される
     #キー名は"リレーション名＿カラム名"で指定します。
     #リレーション名は、デフォルトではテーブル名をCamelCaseにしたもの
-    Tag_id:
-      settings: 
-        label: タグ
+      Tag__id:
+        settings: 
+          label: タグ
         
 grouping:
     fixed:
@@ -57,14 +57,14 @@ grouping:
         
 #リスト用の設定
 list:
-    filter: Bd_Scaffold_Filter_Thread
+#    filter: Bd_Scaffold_Filter_Thread
     
     #1ページの数を指定。省略すると全件表示される
     per_page: 10
     
     #リストを取得するメソッドを指定。並び順の変更はこれを利用
     #ここに指定するメソッドは必ず$selectを引数に受け取って取得に利用
-#    method: fetchAllOrdered
+    method: fetchAllNewerOrdered
     
     #それぞれ、削除ボタン、編集ボタンのラベルを指定。省略可能。HTMLレンダリングをする。
     #編集、削除ボタン、及び並び替えボタンはいちばん左にまとめて表示される
@@ -87,7 +87,7 @@ list:
         #column:は$record->get('XXX')が呼ばれる
         #get('some_column')を呼ぶとgetSomeColumn()を探し、存在した場合はそのメソッドを呼ぶ
         - label: ID
-          columun: id
+          column: id
 #          style: width:70px;
           
         - label: タイトル
@@ -120,17 +120,17 @@ list:
 #        display: name
 #    strict: false
 
-#grouping:
-#    name: ジャンル
-#    class:
-#        model: Bd_Orm_Main_Const_Thread
-#        method: getGenreList
-#        target: genre_id
-#        display: getGenreCode
-#    strict: false
+grouping:
+    name: ジャンル
+    class:
+        model: Bd_Orm_Main_Const_Thread
+        method: getGenreList
+        target: genre_id
+        display: getGenreCode
+    strict: false
     
-#    fixed:
-#        target: genre_id
-#        class:
-#            model: Bd_Orm_Main_Const_Thread
-#            display: getGenreCode
+    fixed:
+        target: genre_id
+        class:
+            model: Bd_Orm_Main_Const_Thread
+            display: getGenreCode

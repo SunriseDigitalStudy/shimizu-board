@@ -12,11 +12,11 @@ form:
         
     fields:
         id:
-           settings:
-             label: ID
-           name:
-             settings:
-               lavel: タイトル
+          settings:
+            label: ID
+        name:
+          settings:
+            lavel: タイトル
          
 list:
    display:
