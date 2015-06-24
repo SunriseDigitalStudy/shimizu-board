@@ -34,4 +34,8 @@ Class ThreadController extends Sdx_Controller_Action_Http
         Sdx_Debug::dump($list->getFirstRecord(),'title');
         $this->view->assign('list',$list);
     }
+    public function newsAction()
+    {
+        
+    }
 }
