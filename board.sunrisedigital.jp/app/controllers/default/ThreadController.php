@@ -78,7 +78,7 @@ Class ThreadController extends Sdx_Controller_Action_Http {
                 if ($form->execValidate()) {
                     $entry  ->setBody($this->_getParam('body'))
                             ->setAccountId($name)
-//          thread_idがないとエラーが出たのでとりあえず適当な値をsetし動くかだけ確認     
+//          thread_idにとりあえず適当な値をsetし動くかだけ確認     
                             ->setThreadId('1');
                     $entry->save();
                     $db->commit();
