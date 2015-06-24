@@ -206,70 +206,70 @@ class ControlController extends Sdx_Controller_Action_Http {
         $this->_helper->scaffold->run();
     }
 
-    public function threadAction() {
-        $this->_helper->scaffold->setViewRendererPath('default/control/scaffold.tpl');
+//    public function threadAction() {
+//        $this->_helper->scaffold->setViewRendererPath('default/control/scaffold.tpl');
+//
+//        $this->_helper->scaffold->setHook(Sdx_Controller_Action_Helper_Scaffold::HOOK_CREATE_FORM, array($this, 'hookCreateForm'));
+//
+//        $this->_helper->scaffold->setHook(Sdx_Controller_Action_Helper_Scaffold::HOOK_BIND_FORM, array($this, 'hookBindForm'));
+//
+//        $this->_helper->scaffold->setHook(Sdx_Controller_Action_Helper_Scaffold::HOOK_BIND_PARAMS_TO_FORM, array($this, 'hookBindParamsToForm'));
+//
+//        $this->_helper->scaffold->setHook(Sdx_Controller_Action_Helper_Scaffold::HOOK_BEFORE_RECORD_SAVE, array($this, 'hookBeforeRecordSave'));
+//
+//        $this->_helper->scaffold->setHook(Sdx_Controller_Action_Helper_Scaffold::HOOK_OPTIONAL_VALIDATE, array($this, 'hookOptionalValidate'));
+//
+//        $this->_helper->scaffold->setHook(Sdx_Controller_Action_Helper_Scaffold::HOOK_AFTER_RECORD_SAVE, array($this, 'hookAfterRecordSave'));
+//
+//        $this->_helper->scaffold->setHook(Sdx_Controller_Action_Helper_Scaffold::HOOK_LIST_SELECT_BUILDER, array($this, 'hookListSelectBuilder'));
+//
+//        $this->_helper->scaffold->setHook(Sdx_Controller_Action_Helper_Scaffold::HOOK_LIST_SELECT, array($this, 'hookListSelect'));
+//
+//        $this->_helper->scaffold->run();
+//    }
+//
+//    public function hookCreateForm($params) {
+//        Sdx_Debug::dump($params, 'hookCreateForm');
+//    }
+//
+//    public function hookBindForm($params) {
+//        Sdx_Debug::dump($params, 'hookBindForm');
+//    }
+//
+//    public function hookBindParamsToForm($params) {
+//        Sdx_Debug::dump($params, 'hookBindParamsToForm');
+//    }
+//
+//    public function hookBeforeRecordSave($params) {
+//        Sdx_Debug::dump($params, 'hookBeforeRecordSave');
+//    }
+//
+//    public function hookOptionalValidate($params) {
+//        Sdx_Debug::dump($params, hookOptionalValidate);
+//    }
+//
+//    public function hookAfterRecordSave($params) {
+//        Sdx_Debug::dump($params, 'hookAfterRecordSave');
+//    }
+//
+//    public function hookListSelectBuilder($params) {
+//        Sdx_Debug::dump($params, 'hookListSelectBuilder');
+//    }
+//
+//    public function hookListSelect($params) {
+//        Sdx_Debug::dump($params, 'hookListSelect');
+//    }
+//
+//    public function genreListAction() {
+//        $this->_helper->scaffold->setViewRendererPath('default/control/scaffold.tpl');
+////      リスト画面のみを起動する（編集画面のURL,設定名）  
+//        $this->_helper->scaffold->runList('/control/genre-edit', 'scaffold/default/control/genre');
+//    }
+//
+//    public function genreEditAction() {
+//        $this->_helper->scaffold->setViewRendererPath('default/control/scaffold.tpl');
+////      編集画面を起動する（リスト画面のURL,設定名）  
+//        $this->_helper->scaffold->runEdit('/control/genre-list', 'scaffold/default/control/genre');
+//    }
 
-        $this->_helper->scaffold->setHook(Sdx_Controller_Action_Helper_Scaffold::HOOK_CREATE_FORM, array($this, 'hookCreateForm'));
-
-        $this->_helper->scaffold->setHook(Sdx_Controller_Action_Helper_Scaffold::HOOK_BIND_FORM, array($this, 'hookBindForm'));
-
-        $this->_helper->scaffold->setHook(Sdx_Controller_Action_Helper_Scaffold::HOOK_BIND_PARAMS_TO_FORM, array($this, 'hookBindParamsToForm'));
-        
-        $this->_helper->scaffold->setHook(Sdx_Controller_Action_Helper_Scaffold::HOOK_BEFORE_RECORD_SAVE, array($this, 'hookBeforeRecordSave'));
-
-        $this->_helper->scaffold->setHook(Sdx_Controller_Action_Helper_Scaffold::HOOK_OPTIONAL_VALIDATE, array($this, 'hookOptionalValidate'));
-
-        $this->_helper->scaffold->setHook(Sdx_Controller_Action_Helper_Scaffold::HOOK_AFTER_RECORD_SAVE, array($this, 'hookAfterRecordSave'));
-
-        $this->_helper->scaffold->setHook(Sdx_Controller_Action_Helper_Scaffold::HOOK_LIST_SELECT_BUILDER, array($this, 'hookListSelectBuilder'));
-
-        $this->_helper->scaffold->setHook(Sdx_Controller_Action_Helper_Scaffold::HOOK_LIST_SELECT, array($this, 'hookListSelect'));
-
-        $this->_helper->scaffold->run();
-    }
-
-    public function hookCreateForm($params) {
-        Sdx_Debug::dump($params, 'hookCreateForm');
-    }
-
-    public function hookBindForm($params) {
-        $params['bind']['values'] = $params['record']->getSomeList()->toSimpleArray('value');
-    }
-
-    public function hookBindParamsToForm($params) {
-        Sdx_Debug::dump($params, 'hookBindParamsToForm');
-    }
-
-    public function hookBeforeRecordSave($params) {
-        Sdx_Debug::dump($params, 'hookBeforeRecordSave');
-    }
-
-    public function hookOptionalValidate($params) {
-        Sdx_Debug::dump($params, hookOptionalValidate);
-    }
-
-    public function hookAfterRecordSave($params) {
-        Sdx_Debug::dump($params, 'hookAfterRecordSave');
-    }
-
-    public function hookListSelectBuilder($params) {
-        Sdx_Debug::dump($params, 'hookListSelectBuilder');
-    }
-
-    public function hookListSelect($params) {
-        Sdx_Debug::dump($params, 'hookListSelect');
-    }
-    public function genreListAction()
-    {
-        $this->_helper->scaffold->setViewRendererPath('default/control/scaffold.tpl');
-//      リスト画面のみを起動する（編集画面のURL,設定名）  
-        $this->_helper->scaffold->runList('/control/genre-edit', 'scaffold/default/control/genre');
-    }
-    
-    public function genreEditAction()
-    {
-        $this->_helper->scaffold->setViewRendererPath('default/control/scaffold.tpl');
-//      編集画面を起動する（リスト画面のURL,設定名）  
-        $this->_helper->scaffold->runEdit('/control/genre-list', 'scaffold/default/control/genre');
-    }
 }

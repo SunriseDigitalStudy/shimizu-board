@@ -35,5 +35,4 @@ class SecureController extends Sdx_Controller_Action_Http {
                     'name' => 'password',
         )));
     }
-
 }
