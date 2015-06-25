@@ -27,16 +27,22 @@ Class ThreadController extends Sdx_Controller_Action_Http {
                 ->addColumns('name');
         $list = $t_genre->fetchAll($select);
 
-        //Sdx_Debug::dump($list->getFirstRecord(),'title');
+        
         $this->view->assign('list', $list);
     }
 
-    public function contributeAction() {
+    public function titleAction() {
+        $t_entry = Bd_Orm_Main_Entry::createTable();
+        $sb_entry = $t_entry->createSelectBuilder();
+        $sb_entry->account->innerJoin();
+        $select = $sb_entry->build();
+        $this->view->assign('list', $t_entry->fetchAll($select));       
+
         $form = new Sdx_Form();
         $form->setActionCurrentPage()->setMethodToPost();
-
         $elem = new Sdx_Form_Element_Text();
-        $elem->setName('body');
+        $elem   ->setName('body')
+                ->addValidator(new Sdx_Validate_NotEmpty());
         $form->setElement($elem);
 
         //formがsubmitされていたら
@@ -68,10 +74,6 @@ Class ThreadController extends Sdx_Controller_Action_Http {
             }
         }
         $this->view->assign('form', $form);
-    }
-
-    public function contentAction() {
-        
     }
 
 }
