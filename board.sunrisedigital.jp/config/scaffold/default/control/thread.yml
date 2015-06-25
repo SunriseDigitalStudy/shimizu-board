@@ -99,7 +99,7 @@ list:
 #          style: width:30%;min-width:100px;
         
         - label: 記事投稿
-          html: <a href="/thread/contribute">記事投稿</a>
+          html: <a href="/thread/contribute?thread_id=%record:id%">記事投稿</a>
          
           
         #html:はそのままHTMLとして表示される          

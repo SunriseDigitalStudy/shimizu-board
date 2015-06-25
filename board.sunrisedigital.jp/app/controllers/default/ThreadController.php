@@ -27,7 +27,7 @@ Class ThreadController extends Sdx_Controller_Action_Http {
                 ->addColumns('name');
         $list = $t_genre->fetchAll($select);
 
-//        Sdx_Debug::dump($list->getFirstRecord(),'title');
+        //Sdx_Debug::dump($list->getFirstRecord(),'title');
         $this->view->assign('list', $list);
     }
 
@@ -35,51 +35,26 @@ Class ThreadController extends Sdx_Controller_Action_Http {
         $form = new Sdx_Form();
         $form->setActionCurrentPage()->setMethodToPost();
 
-//      ユーザーIDの取得
-        $context = Sdx_Context::getInstance();
-        $name = $context->getVar('signed_account')->getId();
-        Sdx_Debug::dump($name, 'name');
-
-//      thread_idを取得したい  
-        $t_entry = Bd_Orm_Main_Entry::createTable();
-//      innerjoinは成功している
-        list($t_thread) = $t_entry->innerJoin('Thread');              
-        $select = $t_entry->select();
-        
-//        $select ->resetColumns()
-//              ->addColumns('thread_id');
-        $list = $t_entry->fetchAll($select);
-        
-        Sdx_Debug::dump($list->getFirstRecord(),'listcheck');
-//        $id = $list->getThredId();
-//                ->getThreadId();
-        
-        Sdx_Debug::dump($select,'check');
-        
-//        $t_entry = Bd_Orm_Main_Entry::createTable();
         $elem = new Sdx_Form_Element_Text();
-        $elem ->setName('body');
-//          １文字以上の入力を必須にする
-//            ->addValidator(new Sdx_Validate_StringLength(array('min' => 1)));
-        $form ->setElement($elem);
+        $elem->setName('body');
+        $form->setElement($elem);
 
-//      formがsubmitされていたら
+        //formがsubmitされていたら
         if ($this->_getParam('submit')) {
+            //entryテーブルにinsertする際にユーザーIDが必要なためログインユーザーの情報を取得
+            $context = Sdx_Context::getInstance();
+
             $form->bind($this->_getAllParams());
 
             $entry = new Bd_Orm_Main_Entry();
             $db = $entry->updateConnection();
 
             $db->beginTransaction();
-
-
-
             try {
                 if ($form->execValidate()) {
-                    $entry  ->setBody($this->_getParam('body'))
-                            ->setAccountId($name)
-//          thread_idにとりあえず適当な値をsetし動くかだけ確認     
-                            ->setThreadId('1');
+                    $entry ->setBody($this->_getParam('body'))
+                           ->setAccountId($context->getVar('signed_account')->getId())
+                           ->setThreadId($this->_getParam('thread_id'));
                     $entry->save();
                     $db->commit();
 
