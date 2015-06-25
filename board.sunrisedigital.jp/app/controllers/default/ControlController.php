@@ -15,7 +15,7 @@ class ControlController extends Sdx_Controller_Action_Http {
 
     //put your code here
     public function tagAction() {
-//      テンプレートのパスの設定  
+        //テンプレートのパスの設定  
         $this->_helper->scaffold->setViewRendererPath('default/control/scaffold.tpl');
         $this->_helper->scaffold->run();
     }
