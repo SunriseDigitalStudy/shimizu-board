@@ -20,7 +20,7 @@ class ControlController extends Sdx_Controller_Action_Http {
         $this->_helper->scaffold->run();
     }
 
-    //    Sdx_Db_Select_Builder_Contextクラスをテストするためのアクション
+    //Sdx_Db_Select_Builder_Contextクラスをテストするためのアクション
     public function selectbuilderAction() {
         $this->_disableViewRenderer();
 //        作成するSQL
