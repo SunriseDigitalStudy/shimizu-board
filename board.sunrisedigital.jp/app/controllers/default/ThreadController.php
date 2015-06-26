@@ -42,14 +42,14 @@ Class ThreadController extends Sdx_Controller_Action_Http {
         $form = new Sdx_Form();
         $form->setActionCurrentPage()->setMethodToPost();
         $elem = new Sdx_Form_Element_Textarea();
-        $elem ->setName('body')
-              ->addValidator(new Sdx_Validate_NotEmpty());
+        $elem->setName('body')
+                ->addValidator(new Sdx_Validate_NotEmpty());
         $form->setElement($elem);
 
         //formがsubmitされていたら
         if ($this->_getParam('submit')) {
             $form->bind($this->_getAllParams());
-            
+
             if ($form->execValidate()) {
                 $entry = new Bd_Orm_Main_Entry();
                 $db = $entry->updateConnection();
@@ -57,11 +57,10 @@ Class ThreadController extends Sdx_Controller_Action_Http {
             }
 
             try {
-                $current_account=Sdx_Context::getInstance()->getVar('signed_account')->getId();
-                $entry ->setBody($this->_getParam('body'))
-                       ->setAccountId($current_account)
-                       ->setThreadId($this->_getParam('thread_id'));
-
+                $current_account = Sdx_Context::getInstance()->getVar('signed_account');
+                    $entry ->setBody($this->_getParam('body'))
+                           ->setAccountId($current_account)
+                           ->setThreadId($this->_getParam('thread_id'));
                 $entry->save();
                 $db->commit();
 
@@ -73,4 +72,5 @@ Class ThreadController extends Sdx_Controller_Action_Http {
         }
         $this->view->assign('form', $form);
     }
+
 }
