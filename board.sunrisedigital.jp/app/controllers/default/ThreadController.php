@@ -57,9 +57,9 @@ Class ThreadController extends Sdx_Controller_Action_Http {
             }
 
             try {
-                $current_account=Sdx_Context::getInstance()->getVar('signed_account')->getId();
+                $current_account=Sdx_Context::getInstance()->getVar('signed_account');
                 $entry ->setBody($this->_getParam('body'))
-                       ->setAccountId($current_account)
+                       ->setAccountId($current_account->getId())
                        ->setThreadId($this->_getParam('thread_id'));
 
                 $entry->save();
