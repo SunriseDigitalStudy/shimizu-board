@@ -27,7 +27,7 @@ Class ThreadController extends Sdx_Controller_Action_Http {
                 ->addColumns('name');
         $list = $t_genre->fetchAll($select);
 
-        
+
         $this->view->assign('list', $list);
     }
 
@@ -35,40 +35,37 @@ Class ThreadController extends Sdx_Controller_Action_Http {
         $t_entry = Bd_Orm_Main_Entry::createTable();
         $sb_entry = $t_entry->createSelectBuilder();
         $sb_entry->account->innerJoin();
-        $sb_entry->addWhere('thread_id',array($this->_getParam('thread_id')));
+        $sb_entry->addWhere('thread_id', array($this->_getParam('thread_id')));
         $select = $sb_entry->build();
         $this->view->assign('list', $t_entry->fetchAll($select));
 
         $form = new Sdx_Form();
         $form->setActionCurrentPage()->setMethodToPost();
         $elem = new Sdx_Form_Element_Textarea();
-        $elem   ->setName('body')
-                ->addValidator(new Sdx_Validate_NotEmpty());
+        $elem ->setName('body')
+              ->addValidator(new Sdx_Validate_NotEmpty());
         $form->setElement($elem);
 
         //formがsubmitされていたら
         if ($this->_getParam('submit')) {
-            //entryテーブルにinsertする際にユーザーIDが必要なためログインユーザーの情報を取得
-            $context = Sdx_Context::getInstance();
-
             $form->bind($this->_getAllParams());
+            
+            if ($form->execValidate()) {
+                $entry = new Bd_Orm_Main_Entry();
+                $db = $entry->updateConnection();
+                $db->beginTransaction();
+            }
 
-            $entry = new Bd_Orm_Main_Entry();
-            $db = $entry->updateConnection();
-
-            $db->beginTransaction();
             try {
-                if ($form->execValidate()) {
-                    $entry ->setBody($this->_getParam('body'))
-                           ->setAccountId($context->getVar('signed_account')->getId())
-                           ->setThreadId($this->_getParam('thread_id'));
-                    $entry->save();
-                    $db->commit();
+                $current_account=Sdx_Context::getInstance()->getVar('signed_account')->getId();
+                $entry ->setBody($this->_getParam('body'))
+                       ->setAccountId($current_account)
+                       ->setThreadId($this->_getParam('thread_id'));
 
-                    $this->redirectAfterSave('/thread/contribute');
-                } else {
-                    $db->rollback();
-                }
+                $entry->save();
+                $db->commit();
+
+                $this->redirectAfterSave('/thread/title?thread_id=' . $this->_getParam('thread_id'));
             } catch (Exception $e) {
                 $db->rollback();
                 throw $e;
@@ -76,5 +73,4 @@ Class ThreadController extends Sdx_Controller_Action_Http {
         }
         $this->view->assign('form', $form);
     }
-
 }
