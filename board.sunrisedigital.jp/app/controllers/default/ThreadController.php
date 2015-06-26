@@ -72,5 +72,22 @@ Class ThreadController extends Sdx_Controller_Action_Http {
         }
         $this->view->assign('form', $form);
     }
-
+    public function editAction(){
+        $t_entry = Bd_Orm_Main_Entry::createTable();
+        $sb_entry = $t_entry->createSelectBuilder();
+        $sb_entry->account->innerJoin();
+        $sb_entry->addWhere('id',array($this->_getParam('entry_no')));
+        $select = $sb_entry->build();
+//        Sdx_Debug::dump($t_entry->fetchAll($select)->getFirstRecord(),'title');
+                
+        $form = new Sdx_Form();
+        foreach ($t_entry->fetchAll($select) as $list);
+        $form  ->setAction("/thread/title?thread_id=".$list->getThreadId())
+               ->setMethodToPost();
+        $elem = new Sdx_Form_Element_Textarea();
+        $elem->setName('edit');
+        $form->setElement($elem);
+        
+        $this->view->assign('form',$form);
+    }
 }
