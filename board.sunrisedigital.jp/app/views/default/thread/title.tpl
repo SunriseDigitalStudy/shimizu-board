@@ -5,20 +5,22 @@
         書き込み一覧</div>
         {*    <div class="panel panel-default">*}
     <div class="panel-body">
-        {foreach $list as $thread}
         <table class="table">
                 <tr>
                     <th>No</th>
                     <th></th>
-                    <th>ユーザー名</th>
+                    <th>書き込み日時</th>
+                    <th>ユーザー</th>
                 </tr>
+                {foreach $list as $entry}
                 <tr>
-                    <td>{$thread->getId()}</td>
-                    <td>{$thread->getBody()}</td>
-                    <td>{$thread->getAccountId()}</td>
+                    <td>{$entry->getId()}</td>
+                    <td>{$entry->getBody()}</td>
+                    <td>{$entry->getUpdatedAt()}</td>
+                    <td>{$entry->getAccount()->getName()}</td>
                 </tr>
+                {/foreach}
             </table>
-        {/foreach}
     </div>
     {*    </div>*}
     <div class="panel panel-default">

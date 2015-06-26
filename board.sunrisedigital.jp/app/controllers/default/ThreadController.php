@@ -35,12 +35,13 @@ Class ThreadController extends Sdx_Controller_Action_Http {
         $t_entry = Bd_Orm_Main_Entry::createTable();
         $sb_entry = $t_entry->createSelectBuilder();
         $sb_entry->account->innerJoin();
+        $sb_entry->addWhere('thread_id',array($this->_getParam('thread_id')));
         $select = $sb_entry->build();
-        $this->view->assign('list', $t_entry->fetchAll($select));       
+        $this->view->assign('list', $t_entry->fetchAll($select));
 
         $form = new Sdx_Form();
         $form->setActionCurrentPage()->setMethodToPost();
-        $elem = new Sdx_Form_Element_Text();
+        $elem = new Sdx_Form_Element_Textarea();
         $elem   ->setName('body')
                 ->addValidator(new Sdx_Validate_NotEmpty());
         $form->setElement($elem);
