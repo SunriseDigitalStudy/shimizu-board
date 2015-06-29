@@ -91,12 +91,13 @@ list:
 #          style: width:70px;
           
         - label: タイトル
-          column: title
+#          column: title
+          html: <a href="/thread/title?thread_id=%record:id%">%record:title%</a>
           
-        #$record->get()は.区切りの引数を分解して繰り返し呼ぶ（ここでは$record->get('genre')->get('code')が呼ばれる）
+        #$record->get()は.区切りの引数を分解して繰り返し呼ぶ（ここでは$record->get('genre')->get('name')が呼ばれる）
         - label: ジャンル
           column: genre.name
-#          style: width:30%;min-width:100px;
+#          style: width:30%;min-width:100px;      
           
         #html:はそのままHTMLとして表示される          
 #        - label: ジャンル

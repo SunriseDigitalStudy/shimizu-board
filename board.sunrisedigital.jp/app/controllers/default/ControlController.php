@@ -15,12 +15,12 @@ class ControlController extends Sdx_Controller_Action_Http {
 
     //put your code here
     public function tagAction() {
-//      テンプレートのパスの設定  
+        //テンプレートのパスの設定  
         $this->_helper->scaffold->setViewRendererPath('default/control/scaffold.tpl');
         $this->_helper->scaffold->run();
     }
 
-    //    Sdx_Db_Select_Builder_Contextクラスをテストするためのアクション
+    //Sdx_Db_Select_Builder_Contextクラスをテストするためのアクション
     public function selectbuilderAction() {
         $this->_disableViewRenderer();
 //        作成するSQL
@@ -171,7 +171,8 @@ class ControlController extends Sdx_Controller_Action_Http {
         $sb_entry->builder()->format(
 //                '{entry}.thread_id = :thread_id AND ({account}.name LIKE :like_1 OR {account}.name LIKE :like_1)',
 //                like2にbarが渡されてるかのテストコード
-                '{entry}.thread_id = :thread_id AND ({account}.name LIKE :like_1 OR {account}.name LIKE :like_2)', array(':thread_id' => 1, ':like_1' => '%foo%', ':like_2' => '%bar%',)
+                '{entry}.thread_id = :thread_id AND ({account}.name LIKE :like_1 OR {account}.name LIKE :like_2)', 
+                array(':thread_id' => 1, ':like_1' => '%foo%', ':like_2' => '%bar%',)
         );
         $select = $sb_entry->build();
 
@@ -196,7 +197,8 @@ class ControlController extends Sdx_Controller_Action_Http {
                 ->setColumns(array('max_id' => 'MAX(id)'));
 //        JOINする
         $select->joinInner(
-                array('sub_entry' => new Zend_Db_Expr('(' . $sub_sel->assemble() . ')')), 'sub_entry.max_id = ' . $sb_entry->table()->appendAlias('account_id')
+                array('sub_entry' => new Zend_Db_Expr('(' . $sub_sel->assemble() . ')')), 
+                'sub_entry.max_id = ' . $sb_entry->table()->appendAlias('account_id')
         );
         $list = $t_entry->fetchAll($select);
     }
