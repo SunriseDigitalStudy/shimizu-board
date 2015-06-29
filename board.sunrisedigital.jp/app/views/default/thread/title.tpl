@@ -15,7 +15,7 @@
                 {foreach $list as $entry}
                 <tr>
                     <td>{$entry->getId()}</td>
-                    <td>{$entry->getBody()}</td>
+                    <td>{$entry->getBody()|nl2br nofilter}</td>
                     <td>{$entry->getUpdatedAt()}</td>
                     <td>{$entry->getAccount()->getName()}</td>
                 </tr>
