@@ -17,7 +17,17 @@ Class ThreadController extends Sdx_Controller_Action_Http {
     }
 
     public function deleteAction() {
-        Sdx_Debug::dump($this->_getParam('thread_id'), 'title');
+        $t_entry = Bd_Orm_Main_Entry::createTable();
+        $sb_entry = $t_entry->createSelectBuilder();
+        $sb_entry->account->innerJoin();
+        $sb_entry->addWhere('id', array($this->_getParam('entry_no')));
+        $select = $sb_entry->build();
+        $this->view->assign('list',$t_entry->fetchAll($select));
+        
+        $form = new Sdx_Form();
+        $form->setActionCurrentPage()->setMethodToPost();
+        
+        $this->view->assign('form', $form);   
     }
 
     public function menuAction() {
@@ -78,10 +88,9 @@ Class ThreadController extends Sdx_Controller_Action_Http {
         $sb_entry->account->innerJoin();
         $sb_entry->addWhere('id', array($this->_getParam('entry_no')));
         $select = $sb_entry->build();
-        foreach ($t_entry->fetchAll($select) as $test) {
-            Sdx_Debug::dump($test->getBody(), 'body');
+        foreach ($t_entry->fetchAll($select) as $edit) {
         }
-        $this->view->assign('body', $test->getBody());
+        $this->view->assign('body', $edit->getBody());
 
         $form = new Sdx_Form();
         foreach ($t_entry->fetchAll($select) as $list) {
@@ -92,7 +101,6 @@ Class ThreadController extends Sdx_Controller_Action_Http {
 
         $elem = new Sdx_Form_Element_Textarea();
         $elem  ->setName('edit')
-               ->setLabel($test->getBody())
                ->addValidator(new Sdx_Validate_NotEmpty());
         $form->setElement($elem);
 
@@ -117,5 +125,4 @@ Class ThreadController extends Sdx_Controller_Action_Http {
         }
         $this->view->assign('form', $form);
     }
-
 }
