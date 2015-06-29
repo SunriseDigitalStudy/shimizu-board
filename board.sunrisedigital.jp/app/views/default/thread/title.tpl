@@ -17,9 +17,9 @@
                     <td>{$entry->getId()}</td>
                     <td>{$entry->getBody()|nl2br nofilter}</td>
                     {if $sdx_user->hasId()}
-                    <td><a href="/thread/edit/edit?entry_no={$entry->getId()}">
-                    <input type="button" value="編集" class="btn btn-info"></a></td>
-                    {/if}
+                        <td><a href="/thread/edit/edit?entry_no={$entry->getId()}">
+                                <input type="button" value="編集" class="btn btn-info"></a></td>
+                            {/if}
                     <td>{$entry->getUpdatedAt()}</td>
                     <td>{$entry->getAccount()->getName()}</td>
                 </tr>
