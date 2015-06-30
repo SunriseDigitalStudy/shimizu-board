@@ -7,9 +7,9 @@
     <div class="panel-body">
       {$body|nl2br nofilter}
       {$form->renderStartTag() nofilter}
-      <div class="form-group">
-        {$form.submit->setTagValue("削除する")->render([type=>"submit",class=>"btn btn-danger"]) nofilter}      
-      </div>
+      　<div class="form-group">
+        　{$form.submit->setTagValue("削除する")->render([type=>"submit",class=>"btn btn-danger"]) nofilter}      
+     　 </div>
       </form>
     </div> 
   </div>
