@@ -78,6 +78,9 @@ Class ThreadController extends Sdx_Controller_Action_Http {
 
         try {
           $current_account = Sdx_Context::getInstance()->getVar('signed_account')->getId();
+          if(!$current_account){
+            throw new Sdx_Exception("ログインしてください");
+          }
           $entry  ->setBody($this->_getParam('body'))
                   ->setAccountId($current_account)
                   ->setThreadId($this->_getParam('thread_id'));
@@ -94,31 +97,32 @@ Class ThreadController extends Sdx_Controller_Action_Http {
   }
 
   public function editAction() {
-    $t_entry = Bd_Orm_Main_Entry::createTable();
-    $sb_entry = $t_entry->createSelectBuilder();
-    $sb_entry->account->innerJoin();
-    $sb_entry->addWhere('id', array($this->_getParam('entry_no')));
-    $select = $sb_entry->build();
-    foreach ($t_entry->fetchAll($select) as $edit) {
-      
+    //存在しない値が入れられた時の処理をいれる
+    if($this->param('entry_no') ){
+      $this->_forward404();
     }
-    $this->view->assign('body', $edit->getBody());
-
+    $entry = Bd_Orm_Main_Entry::getTable()->findByPKey($this->param('entry_no',-1));
+    if($entry instanceof Sdx_Null){
+      $this->_forward404();
+    }
+    
     $form = new Sdx_Form();
-    $form  ->setActionCurrentPage()
-           ->setMethodToPost();
+    $form
+      ->setActionCurrentPage()
+      ->setMethodToPost();
 
     $elem = new Sdx_Form_Element_Textarea();
-    $elem  ->setName('edit')
-           ->addValidator(new Sdx_Validate_NotEmpty());
+    $elem
+      ->setName('edit')
+      ->setLabel($entry->getBody())
+      ->addValidator(new Sdx_Validate_NotEmpty());
     $form->setElement($elem);
+    $form->bind($entry->toArray());
 
     if ($this->_getParam('submit')) {
       $form->bind($this->_getAllParams());
       
       if ($form->execValidate()) {
-        $t_entry = Bd_Orm_Main_Entry::createTable();
-        $entry = $t_entry->findByPkey($this->Param('entry_no'));
         $db = $entry->upDateConnection();
         $db->beginTransaction();
 
@@ -126,7 +130,7 @@ Class ThreadController extends Sdx_Controller_Action_Http {
           $entry->setBody($this->_getParam('edit'));
           $entry->save();
           $db->commit();
-          $this->redirectAfterSave('/thread/title?thread_id=' . $edit->getThreadId());
+          $this->redirectAfterSave('/thread/title?thread_id=' . $entry->getThreadId());
         } catch (Exception $e) {
           $db->rollback();
           throw $e;
