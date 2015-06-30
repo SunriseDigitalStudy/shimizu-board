@@ -22,7 +22,6 @@ Class ThreadController extends Sdx_Controller_Action_Http {
     $sb_entry->add('id', $this->Param('entry_no'));
     $select = $sb_entry->build();
     foreach ($t_entry->fetchAll($select) as $delete) {
-      //Sdx_Debug::dump($t_entry->fetchAll($select)->getBody(),"check");
     }
     $this->view->assign('body', $delete->getBody());
 
