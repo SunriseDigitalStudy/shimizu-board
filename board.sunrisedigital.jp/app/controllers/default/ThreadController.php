@@ -50,21 +50,23 @@ Class ThreadController extends Sdx_Controller_Action_Http {
         if ($this->_getParam('submit')) {
             $form->bind($this->_getAllParams());
 
-            if ($form->execValidate()) {
-                $entry = new Bd_Orm_Main_Entry();
-                $db = $entry->updateConnection();
-                $db->beginTransaction();
-            }
+            $entry = new Bd_Orm_Main_Entry();
+            $db = $entry->updateConnection();
+            $db->beginTransaction();
+
 
             try {
-                $current_account = Sdx_Context::getInstance()->getVar('signed_account');
-                    $entry ->setBody($this->_getParam('body'))
-                           ->setAccountId($current_account)
-                           ->setThreadId($this->_getParam('thread_id'));
-                $entry->save();
-                $db->commit();
+                if ($form->execValidate()) {
+                    $current_account = Sdx_Context::getInstance()->getVar('signed_account');
+                    $entry->setBody($this->_getParam('body'))
+                            ->setAccountId($current_account->getId())
+                            ->setThreadId($this->_getParam('thread_id'));
 
-                $this->redirectAfterSave('/thread/title?thread_id=' . $this->_getParam('thread_id'));
+                    $entry->save();
+                    $db->commit();
+
+                    $this->redirectAfterSave('/thread/title?thread_id=' . $this->_getParam('thread_id'));
+                }
             } catch (Exception $e) {
                 $db->rollback();
                 throw $e;
