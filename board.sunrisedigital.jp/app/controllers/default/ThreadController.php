@@ -50,7 +50,6 @@ Class ThreadController extends Sdx_Controller_Action_Http {
         if ($this->_getParam('submit')) {
             $form->bind($this->_getAllParams());
 
-
             $entry = new Bd_Orm_Main_Entry();
             $db = $entry->updateConnection();
             $db->beginTransaction();

@@ -1,0 +1,5 @@
+## YAML Template.
+---
+SDX_EXTEND: acl/default/settings
+
+secure: false
