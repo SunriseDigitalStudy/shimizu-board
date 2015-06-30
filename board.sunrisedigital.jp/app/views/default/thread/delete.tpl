@@ -1,15 +1,16 @@
 {extends file="default/base.tpl"}
 {block title}削除{/block}
 {block main_contents}
-    <div class="panel panel-heading">{$sdx_user = $sdx_context->getUser()}
-    削除</div>
-    <div class="panel panel-body">
-        <div class="panel panel-title">削除内容</div>
-        {$form->renderStartTag() nofilter}
-        <div class="form-group">
-            {foreach $list as $entry}
-                {$entry->getBody()}
-            {/foreach}
-        </div>
-    </div>    
+  <div class="panel panel-default">{$sdx_user = $sdx_context->getUser()}
+    <div class="panel panel-heading">削除</div>
+    <div class="panel-title">削除内容</div>
+    <div class="panel-body">
+      {$body}
+      {$form->renderStartTag() nofilter}
+      <div class="form-group">
+        {$form.submit->setTagValue("削除する")->render([type=>"submit",class=>"btn btn-danger"]) nofilter}      
+      </div>
+      </form>
+    </div> 
+  </div>
 {/block}

@@ -3,6 +3,7 @@
 {block main_contents}
     <div class="panel panel-heading">
         <h5>編集</h5>
+    </div>
         <div class="panel panel-body">
             {$form->renderStartTag() nofilter}
             <div class="form-group">
