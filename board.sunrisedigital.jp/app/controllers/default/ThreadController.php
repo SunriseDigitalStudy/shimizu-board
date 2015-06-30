@@ -8,132 +8,132 @@
 
 Class ThreadController extends Sdx_Controller_Action_Http {
 
-    public function indexAction() {
-        Sdx_Debug::dump($this->_getParam('thread_id'), 'title');
-    }
+  public function indexAction() {
+    Sdx_Debug::dump($this->_getParam('thread_id'), 'title');
+  }
 
-    public function addAction() {
-        Sdx_Debug::dump($this->_getParam('thread_id'), 'title');
-    }
+  public function addAction() {
+    Sdx_Debug::dump($this->_getParam('thread_id'), 'title');
+  }
 
-    public function deleteAction() {
+  public function deleteAction() {
+    $t_entry = Bd_Orm_Main_Entry::createTable();
+    $sb_entry = $t_entry->createSelectBuilder();
+    $sb_entry->add('id', $this->Param('entry_no'));
+    $select = $sb_entry->build();
+    foreach ($t_entry->fetchAll($select) as $delete) {
+      //Sdx_Debug::dump($t_entry->fetchAll($select)->getBody(),"check");
+    }
+    $this->view->assign('body', $delete->getBody());
+
+    $form = new Sdx_Form();
+    $form->setActionCurrentPage()->setMethodToPost();
+
+    $elem = new Sdx_Form_Element_InputButton();
+    $elem->setName('submit');
+    $form->setElement($elem);
+
+    if ($this->_getParam('submit')) {
+      $entry = $t_entry->findByPkey($this->Param('entry_no'));
+      $db = $entry->updateConnection();
+      $db->beginTransaction();
+      $entry->delete();
+      $db->commit();
+      $this->redirectAfterSave('/thread/title?thread_id=' . $delete->getThreadId('thread_id'));
+    }
+    $this->view->assign('form', $form);
+  }
+
+  public function menuAction() {
+    $t_genre = Bd_Orm_Main_Genre::createTable();
+    $select = $t_genre->select();
+    $select ->resetColumns()
+            ->addColumns('name');
+    $list = $t_genre->fetchAll($select);
+    $this->view->assign('list', $list);
+  }
+
+  public function titleAction() {
+    $t_entry = Bd_Orm_Main_Entry::createTable();
+    $sb_entry = $t_entry->createSelectBuilder();
+    $sb_entry->account->innerJoin();
+    $sb_entry->addWhere('thread_id', array($this->_getParam('thread_id')));
+    $select = $sb_entry->build();
+    $this->view->assign('list', $t_entry->fetchAll($select));
+
+    $form = new Sdx_Form();
+    $form->setActionCurrentPage()->setMethodToPost();
+    $elem = new Sdx_Form_Element_Textarea();
+    $elem->setName('body')
+            ->addValidator(new Sdx_Validate_NotEmpty());
+    $form->setElement($elem);
+
+    //formがsubmitされていたら
+    if ($this->_getParam('submit')) {
+      $form->bind($this->_getAllParams());
+
+      if ($form->execValidate()) {
+        $entry = new Bd_Orm_Main_Entry();
+        $db = $entry->updateConnection();
+        $db->beginTransaction();
+
+        try {
+          $current_account = Sdx_Context::getInstance()->getVar('signed_account')->getId();
+          $entry  ->setBody($this->_getParam('body'))
+                  ->setAccountId($current_account)
+                  ->setThreadId($this->_getParam('thread_id'));
+          $entry->save();
+          $db->commit();
+          $this->redirectAfterSave('/thread/title?thread_id=' . $this->_getParam('thread_id'));
+        } catch (Exception $e) {
+          $db->rollback();
+          throw $e;
+        }
+      }
+    }
+    $this->view->assign('form', $form);
+  }
+
+  public function editAction() {
+    $t_entry = Bd_Orm_Main_Entry::createTable();
+    $sb_entry = $t_entry->createSelectBuilder();
+    $sb_entry->account->innerJoin();
+    $sb_entry->addWhere('id', array($this->_getParam('entry_no')));
+    $select = $sb_entry->build();
+    foreach ($t_entry->fetchAll($select) as $edit) {
+      
+    }
+    $this->view->assign('body', $edit->getBody());
+
+    $form = new Sdx_Form();
+    $form  ->setActionCurrentPage()
+           ->setMethodToPost();
+
+    $elem = new Sdx_Form_Element_Textarea();
+    $elem  ->setName('edit')
+           ->addValidator(new Sdx_Validate_NotEmpty());
+    $form->setElement($elem);
+
+    if ($this->_getParam('submit')) {
+      $form->bind($this->_getAllParams());
+      
+      if ($form->execValidate()) {
         $t_entry = Bd_Orm_Main_Entry::createTable();
-        $sb_entry = $t_entry->createSelectBuilder();
-        $sb_entry->account->innerJoin();
-        $sb_entry->add('id', $this->Param('entry_no'));
-        $select = $sb_entry->build();
-        foreach ($t_entry->fetchAll($select) as $delete){
-        }
-        $this->view->assign('body',$delete->getBody());
+        $entry = $t_entry->findByPkey($this->Param('entry_no'));
+        $db = $entry->upDateConnection();
+        $db->beginTransaction();
 
-        $form = new Sdx_Form();
-        $form ->setActionCurrentPage()
-              ->setMethodToPost();
-        
-        $elem = new Sdx_Form_Element_InputButton();
-        $elem->setName('submit');
-        $form->setElement($elem);
-
-        if ($this->_getParam('submit')) {
-            $entry = $t_entry->findByPkey($this->Param('entry_no'));
-            $db = $entry->updateConnection();
-            $db->beginTransaction();
-            $entry->delete();
-            $db->commit();
-            $this->redirectAfterSave('/thread/title?thread_id=' . $delete->getThreadId('thread_id'));
+        try {
+          $entry->setBody($this->_getParam('edit'));
+          $entry->save();
+          $db->commit();
+          $this->redirectAfterSave('/thread/title?thread_id=' . $edit->getThreadId());
+        } catch (Exception $e) {
+          $db->rollback();
+          throw $e;
         }
-        $this->view->assign('form',$form);
+      }
     }
-
-    public function menuAction() {
-        $t_genre = Bd_Orm_Main_Genre::createTable();
-        $select = $t_genre->select();
-        $select ->resetColumns()
-                ->addColumns('name');
-        $list = $t_genre->fetchAll($select);
-        $this->view->assign('list', $list);
-    }
-
-    public function titleAction() {
-        $t_entry = Bd_Orm_Main_Entry::createTable();
-        $sb_entry = $t_entry->createSelectBuilder();
-        $sb_entry->account->innerJoin();
-        $sb_entry->addWhere('thread_id', array($this->_getParam('thread_id')));
-        $select = $sb_entry->build();
-        $this->view->assign('list', $t_entry->fetchAll($select));
-
-        $form = new Sdx_Form();
-        $form->setActionCurrentPage()->setMethodToPost();
-        $elem = new Sdx_Form_Element_Textarea();
-        $elem  ->setName('body')
-               ->addValidator(new Sdx_Validate_NotEmpty());
-        $form->setElement($elem);
-
-        //formがsubmitされていたら
-        if ($this->_getParam('submit')) {
-            $form->bind($this->_getAllParams());
-
-            if ($form->execValidate()) {
-                $entry = new Bd_Orm_Main_Entry();
-                $db = $entry->updateConnection();
-                $db->beginTransaction();
-
-                try {
-                    $current_account = Sdx_Context::getInstance()->getVar('signed_account')->getId();
-                    $entry->setBody($this->_getParam('body'))
-                            ->setAccountId($current_account)
-                            ->setThreadId($this->_getParam('thread_id'));
-                    $entry->save();
-                    $db->commit();
-                    $this->redirectAfterSave('/thread/title?thread_id=' . $this->_getParam('thread_id'));
-                } catch (Exception $e) {
-                    $db->rollback();
-                    throw $e;
-                }
-            }
-        }
-        $this->view->assign('form', $form);
-    }
-
-    public function editAction() {
-        $t_entry = Bd_Orm_Main_Entry::createTable();
-        $sb_entry = $t_entry->createSelectBuilder();
-        $sb_entry->account->innerJoin();
-        $sb_entry->addWhere('id', array($this->_getParam('entry_no')));
-        $select = $sb_entry->build();
-        foreach ($t_entry->fetchAll($select) as $edit) {
-            
-        }
-        $this->view->assign('body', $edit->getBody());
-
-        $form = new Sdx_Form();
-        $form  ->setActionCurrentPage()
-               ->setMethodToPost();
-
-        $elem = new Sdx_Form_Element_Textarea();
-        $elem  ->setName('edit')
-               ->addValidator(new Sdx_Validate_NotEmpty());
-        $form->setElement($elem);
-
-        if ($this->_getParam('submit')) {
-            $form->bind($this->_getAllParams());
-            if ($form->execValidate()) {
-                $t_entry = Bd_Orm_Main_Entry::createTable();
-                $entry = $t_entry->findByPkey($this->Param('entry_no'));
-                $db = $entry->upDateConnection();
-                $db->beginTransaction();
-
-                try {
-                    $entry->setBody($this->_getParam('edit'));
-                    $entry->save();
-                    $db->commit();
-                    $this->redirectAfterSave('/thread/title?thread_id=' . $edit->getThreadId());
-                } catch (Exception $e) {
-                    $db->rollback();
-                    throw $e;
-                }
-            }
-        }
-        $this->view->assign('form', $form);
-    }
+    $this->view->assign('form', $form);
+  }
 }
