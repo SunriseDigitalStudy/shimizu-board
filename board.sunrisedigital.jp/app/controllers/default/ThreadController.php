@@ -20,24 +20,37 @@ Class ThreadController extends Sdx_Controller_Action_Http {
         $t_entry = Bd_Orm_Main_Entry::createTable();
         $sb_entry = $t_entry->createSelectBuilder();
         $sb_entry->account->innerJoin();
-        $sb_entry->addWhere('id', array($this->_getParam('entry_no')));
+        $sb_entry->add('id', $this->Param('entry_no'));
         $select = $sb_entry->build();
-        $this->view->assign('list',$t_entry->fetchAll($select));
-        
+        foreach ($t_entry->fetchAll($select) as $delete){
+        }
+        $this->view->assign('body',$delete->getBody());
+
         $form = new Sdx_Form();
-        $form->setActionCurrentPage()->setMethodToPost();
+        $form ->setActionCurrentPage()
+              ->setMethodToPost();
         
-        $this->view->assign('form', $form);   
+        $elem = new Sdx_Form_Element_InputButton();
+        $elem->setName('submit');
+        $form->setElement($elem);
+
+        if ($this->_getParam('submit')) {
+            $entry = $t_entry->findByPkey($this->Param('entry_no'));
+            $db = $entry->updateConnection();
+            $db->beginTransaction();
+            $entry->delete();
+            $db->commit();
+            $this->redirectAfterSave('/thread/title?thread_id=' . $delete->getThreadId('thread_id'));
+        }
+        $this->view->assign('form',$form);
     }
 
     public function menuAction() {
         $t_genre = Bd_Orm_Main_Genre::createTable();
         $select = $t_genre->select();
-        $select->resetColumns()
+        $select ->resetColumns()
                 ->addColumns('name');
         $list = $t_genre->fetchAll($select);
-
-
         $this->view->assign('list', $list);
     }
 
@@ -52,8 +65,8 @@ Class ThreadController extends Sdx_Controller_Action_Http {
         $form = new Sdx_Form();
         $form->setActionCurrentPage()->setMethodToPost();
         $elem = new Sdx_Form_Element_Textarea();
-        $elem->setName('body')
-                ->addValidator(new Sdx_Validate_NotEmpty());
+        $elem  ->setName('body')
+               ->addValidator(new Sdx_Validate_NotEmpty());
         $form->setElement($elem);
 
         //formがsubmitされていたら
@@ -66,7 +79,7 @@ Class ThreadController extends Sdx_Controller_Action_Http {
                 $db->beginTransaction();
 
                 try {
-                    $current_account = Sdx_Context::getInstance()->getVar('signed_account');
+                    $current_account = Sdx_Context::getInstance()->getVar('signed_account')->getId();
                     $entry->setBody($this->_getParam('body'))
                             ->setAccountId($current_account)
                             ->setThreadId($this->_getParam('thread_id'));
@@ -89,15 +102,13 @@ Class ThreadController extends Sdx_Controller_Action_Http {
         $sb_entry->addWhere('id', array($this->_getParam('entry_no')));
         $select = $sb_entry->build();
         foreach ($t_entry->fetchAll($select) as $edit) {
+            
         }
         $this->view->assign('body', $edit->getBody());
 
         $form = new Sdx_Form();
-        foreach ($t_entry->fetchAll($select) as $list) {
-            $form->setActionCurrentPage()
-                    ->setMethodToPost();
-//            Sdx_Debug::dump($list->getBody(),'test');
-        }
+        $form  ->setActionCurrentPage()
+               ->setMethodToPost();
 
         $elem = new Sdx_Form_Element_Textarea();
         $elem  ->setName('edit')
@@ -116,7 +127,7 @@ Class ThreadController extends Sdx_Controller_Action_Http {
                     $entry->setBody($this->_getParam('edit'));
                     $entry->save();
                     $db->commit();
-                    $this->redirect('/thread/title?thread_id=' . $list->getThreadId());
+                    $this->redirectAfterSave('/thread/title?thread_id=' . $edit->getThreadId());
                 } catch (Exception $e) {
                     $db->rollback();
                     throw $e;
