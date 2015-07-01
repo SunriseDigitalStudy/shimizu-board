@@ -28,7 +28,7 @@ class Bd_Scaffold_Filter_Thread extends Sdx_Scaffold_Filter {
         return $form;
     }
 
-    protected function _selectTitle(Sdx_Db_Select $select, $column, Sdx_Db_Table $table) {
+    protected function _selectTitle(Sdx_Db_Select $select, $column, $value, Sdx_Db_Table $table) {
         $select->like('title', '%' . $value . '%', $table);
     }
     
