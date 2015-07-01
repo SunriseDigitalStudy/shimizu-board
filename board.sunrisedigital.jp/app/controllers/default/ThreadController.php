@@ -17,36 +17,33 @@ Class ThreadController extends Sdx_Controller_Action_Http {
   }
 
   public function deleteAction() {
-    $t_entry = Bd_Orm_Main_Entry::createTable();
-    $sb_entry = $t_entry->createSelectBuilder();
-    $sb_entry->add('id', $this->Param('entry_no'));
-    $select = $sb_entry->build();
-    foreach ($t_entry->fetchAll($select) as $delete) {
+    $entry = Bd_Orm_Main_Entry::getTable()->findByPkey($this->param('entry_no', -1));
+    if ($entry instanceof Sdx_Null) {
+      $this->_forward404();
     }
-    $this->view->assign('body', $delete->getBody());
 
-    $form = new Sdx_Form();
-    $form->setActionCurrentPage()->setMethodToPost();
-
-    $elem = new Sdx_Form_Element_InputButton();
-    $elem->setName('submit');
-    $form->setElement($elem);
+    $this->view->assign('body', $entry->getBody());
 
     if ($this->_getParam('submit')) {
-      $entry = $t_entry->findByPkey($this->Param('entry_no'));
       $db = $entry->updateConnection();
       $db->beginTransaction();
-      $entry->delete();
-      $db->commit();
-      $this->redirectAfterSave('/thread/title?thread_id=' . $delete->getThreadId('thread_id'));
+      try {
+        $entry->delete();
+        $db->commit();
+        $this->redirectAfterSave('/thread/title?thread_id=' . $entry->getThreadId('thread_id'));
+      } catch (Exception $e) {
+        $db->rollback();
+        throw $e;
+      }
+    } elseif ($this->_getParam('cancel')) {
+      $this->redirect('/thread/title?thread_id=' . $entry->getThreadId('thread_id'));
     }
-    $this->view->assign('form', $form);
   }
 
   public function menuAction() {
     $t_genre = Bd_Orm_Main_Genre::createTable();
     $select = $t_genre->select();
-    $select ->resetColumns()
+    $select->resetColumns()
             ->addColumns('name');
     $list = $t_genre->fetchAll($select);
     $this->view->assign('list', $list);
@@ -78,12 +75,13 @@ Class ThreadController extends Sdx_Controller_Action_Http {
 
         try {
           $current_account = Sdx_Context::getInstance()->getVar('signed_account')->getId();
-          if(!$current_account){
+          if (!$current_account) {
             throw new Sdx_Exception("ログインしてください");
           }
-          $entry  ->setBody($this->_getParam('body'))
-                  ->setAccountId($current_account)
-                  ->setThreadId($this->_getParam('thread_id'));
+          $entry
+            ->setBody($this->_getParam('body'))
+            ->setAccountId($current_account)
+            ->setThreadId($this->_getParam('thread_id'));
           $entry->save();
           $db->commit();
           $this->redirectAfterSave('/thread/title?thread_id=' . $this->_getParam('thread_id'));
@@ -97,15 +95,11 @@ Class ThreadController extends Sdx_Controller_Action_Http {
   }
 
   public function editAction() {
-    //存在しない値が入れられた時の処理をいれる
-    if($this->param('entry_no') ){
+    $entry = Bd_Orm_Main_Entry::getTable()->findByPKey($this->param('entry_no', -1));
+    if ($entry instanceof Sdx_Null) {
       $this->_forward404();
     }
-    $entry = Bd_Orm_Main_Entry::getTable()->findByPKey($this->param('entry_no',-1));
-    if($entry instanceof Sdx_Null){
-      $this->_forward404();
-    }
-    
+
     $form = new Sdx_Form();
     $form
       ->setActionCurrentPage()
@@ -121,7 +115,7 @@ Class ThreadController extends Sdx_Controller_Action_Http {
 
     if ($this->_getParam('submit')) {
       $form->bind($this->_getAllParams());
-      
+
       if ($form->execValidate()) {
         $db = $entry->upDateConnection();
         $db->beginTransaction();
@@ -136,7 +130,10 @@ Class ThreadController extends Sdx_Controller_Action_Http {
           throw $e;
         }
       }
+    } elseif ($this->_getParam('cancel')) {
+      $this->redirect('/thread/title?thread_id=' . $entry->getThreadId());
     }
     $this->view->assign('form', $form);
   }
+
 }
