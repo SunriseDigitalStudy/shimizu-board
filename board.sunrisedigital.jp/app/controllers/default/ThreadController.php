@@ -23,6 +23,7 @@ Class ThreadController extends Sdx_Controller_Action_Http {
     }
 
     $this->view->assign('body', $entry->getBody());
+    $this->view->assign('value', $entry->getThreadId());
 
     if ($this->_getParam('submit')) {
       $db = $entry->updateConnection();
@@ -35,9 +36,7 @@ Class ThreadController extends Sdx_Controller_Action_Http {
         $db->rollback();
         throw $e;
       }
-    } elseif ($this->_getParam('cancel')) {
-      $this->redirect('/thread/title?thread_id=' . $entry->getThreadId('thread_id'));
-    }
+    } 
   }
 
   public function menuAction() {
@@ -130,10 +129,8 @@ Class ThreadController extends Sdx_Controller_Action_Http {
           throw $e;
         }
       }
-    } elseif ($this->_getParam('cancel')) {
-      $this->redirect('/thread/title?thread_id=' . $entry->getThreadId());
     }
     $this->view->assign('form', $form);
+    $this->view->assign('value',$entry->getThreadId());
   }
-
 }
