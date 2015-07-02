@@ -1,34 +1,30 @@
+{extends file='default/base.tpl'}
 {block js}
- <script>
-<!--
-jQuery( function() {
-    jQuery( '#jquery-sample-button' ) . toggle(
-        function() {
-            jQuery . ajax( {
-                url: 'board.sunrisedigital.jp/thread/ajaxtest',
-                success: function( data ) {
-                    jQuery( '#jquery-sample-ajax' ) . html( data );
-                    jQuery( '#jquery-sample-textStatus' ) . text( '読み込み成功' );
-                },
-                error: function( data ) {
-                    jQuery( '#jquery-sample-textStatus' ) . text( '読み込み失敗' );
-                }
-            } );
-        },
-        function() {
-            jQuery( '#jquery-sample-ajax' ) . html( '' );
-            jQuery( '#jquery-sample-textStatus' ) . text( '' );
+  <script>
+    jQuery(function () {
+      $("#jquery-sample-button").click(
+        function () {
+           jQuery.ajax({
+            url: "/thread/ajaxlisttest",
+            success: function (data) {
+              jQuery('#jquery-sample-ajax').html(data);
+            },
+            error: function (data) {
+              jQuery('#jquery-sample-textStatus').text('読み込み失敗');
+            }
+          });
         }
-    );
-} );
-// -->
-</script>{/block}
+      );
+    });
+  </script>
+{/block}
+
 {block main_contents}
- <div id="jquery-sample">
+  <div id="jquery-sample">
     <p>
-        <button id="jquery-sample-button">toggle</button>
-        <span id="jquery-sample-textStatus"></span>
+      <button id="jquery-sample-button" class="btn btn-primary">表示</button>
+      <span id="jquery-sample-textStatus"></span>
     </p>
     <div id="jquery-sample-ajax"></div>
-</div>
+  </div>
 {/block}

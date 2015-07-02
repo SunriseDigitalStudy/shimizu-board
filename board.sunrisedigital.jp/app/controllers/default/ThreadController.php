@@ -136,5 +136,13 @@ Class ThreadController extends Sdx_Controller_Action_Http {
   public function ajaxtestAction(){
     
   }
-
+  public function ajaxlisttestAction(){
+    $t_thread = Bd_Orm_Main_Thread::createTable();
+    $sb_thread= $t_thread->createSelectBuilder();
+    $sb_thread->order('id ASC');
+    
+    $select = $sb_thread->build();
+    $list = $t_thread->fetchAll($select);
+    $this->view->assign('list',$t_thread->fetchAll($select));
+  }
 }
