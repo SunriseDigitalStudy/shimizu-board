@@ -135,5 +135,7 @@ Class ThreadController extends Sdx_Controller_Action_Http {
     }
     $this->view->assign('form', $form);
   }
-
+  public function ajaxtestAction(){
+    
+  }
 }
