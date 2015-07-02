@@ -1,16 +1,17 @@
 {extends file="default/base.tpl"}
 {block title}削除{/block}
 {block main_contents}
-  <div class="panel panel-default">{$sdx_user = $sdx_context->getUser()}
-    <div class="panel panel-heading">削除</div>
-    <div class="panel-title">削除内容</div>
-    <div class="panel-body">
-      {$body|nl2br nofilter}
-      {$form->renderStartTag() nofilter}
-      <div class="form-group">
-        {$form.submit->setTagValue("削除する")->render([type=>"submit",class=>"btn btn-danger"]) nofilter}      
-      </div>
-      </form>
-    </div> 
+  <div class="panel panel-heading">削除</div>
+  <div class="panel-body">
+    <form method="post">
+    　<div class="form-group">
+        <b>{$body|nl2br nofilter}</b>
+        <h5>この書き込みを削除します</h5>
+        <div>
+          <input type='submit' name='submit' value="削除する" class="btn btn-danger">
+        </div>
+      </div> 
+    </form>
+    <a href="/thread/title?thread_id={$value}"><button class="btn btn-default">キャンセル</button></a>
   </div>
 {/block}
