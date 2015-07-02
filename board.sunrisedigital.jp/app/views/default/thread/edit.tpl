@@ -6,15 +6,15 @@
   </div>
   <div class="panel-body">
     {$form->renderStartTag() nofilter}
-      <div class="form-group">
-        <h5>編集内容</h5>
-        {$form.edit->setValue($form.edit->getLabel())->render([class=>"form-control",rows=>"3"]) nofilter}
-        {$form.edit->renderError() nofilter}
-        <div>
-          <input type="submit" name="submit" value="編集する" class="btn btn-success">
-          <input type="submit" name="cancel" value="キャンセル" class="btn btn-default">
-        </div>
+    <div class="form-group">
+      <h5>編集内容</h5>
+      {$form.edit->setValue($form.edit->getLabel())->render([class=>"form-control",rows=>"3"]) nofilter}
+      {$form.edit->renderError() nofilter}
+      <div>
+        <input type="submit" name="submit" value="編集する" class="btn btn-success">
       </div>
-    </form>
-  </div> 
+    </div>
+  </form>
+  <a href="/thread/title?thread_id={$value}"><button class="btn btn-default">キャンセル</button></a>
+</div> 
 {/block}
