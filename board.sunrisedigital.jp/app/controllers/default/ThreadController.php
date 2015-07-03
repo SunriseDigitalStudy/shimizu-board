@@ -133,16 +133,28 @@ Class ThreadController extends Sdx_Controller_Action_Http {
     $this->view->assign('form', $form);
     $this->view->assign('value',$entry->getThreadId());
   }
+  
   public function ajaxtestAction(){
-    
+    $t_tag = Bd_Orm_Main_Tag::createTable();
+    $select = $t_tag->select();
+    $list = $t_tag->fetchAll($select);
+    $this->view->assign('list',$list);
   }
+  
   public function ajaxlisttestAction(){
-    $t_thread = Bd_Orm_Main_Thread::createTable();
-    $sb_thread= $t_thread->createSelectBuilder();
-    $sb_thread->order('id ASC');
+//    $t_thread = Bd_Orm_Main_Thread::createTable();
+//    $t_select = $t_thread->select();
+//    $t_select->order($t_thread->appendAlias('id'));
+//    $t_list = $t_thread->fetchAll($t_select);
+//    $this->view->assign("t_list",$t_list);
     
-    $select = $sb_thread->build();
-    $list = $t_thread->fetchAll($select);
-    $this->view->assign('list',$t_thread->fetchAll($select));
+    $t_thread_tag = Bd_Orm_Main_ThreadTag::createTable();
+    $select = $t_thread_tag->select();
+    $list = $t_thread_tag->fetchAll($select);
+    $this->view->assign('list',$list);
+    
+    $array = array('check'=>(1));
+    http_build_query($array);
+    Sdx_Debug::dump(http_build_query($array));
   }
 }
