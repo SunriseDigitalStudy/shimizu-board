@@ -141,20 +141,23 @@ Class ThreadController extends Sdx_Controller_Action_Http {
     $this->view->assign('list',$list);
   }
   
-  public function ajaxlisttestAction(){
-//    $t_thread = Bd_Orm_Main_Thread::createTable();
-//    $t_select = $t_thread->select();
-//    $t_select->order($t_thread->appendAlias('id'));
-//    $t_list = $t_thread->fetchAll($t_select);
-//    $this->view->assign("t_list",$t_list);
+  public function ajaxlisttestAction(){   
+    $t_thread = Bd_Orm_Main_Thread::createTable();
+    $sb_thread = $t_thread->createSelectBuilder();
     
-    $t_thread_tag = Bd_Orm_Main_ThreadTag::createTable();
-    $select = $t_thread_tag->select();
-    $list = $t_thread_tag->fetchAll($select);
+    if($this->param('search')){
+      $sb_thread->addWhere('title',$this->param('search'));
+    }
+    
+    if($this->param('tag')){
+    $sb_thread->thread_tag->tag->innerJoinChain();
+    $sb_thread->thread_tag->tag->addWhere('id',$this->param('tag'));
+    $sb_thread->thread_tag->tag->group('id');
+    $sb_thread->builder()->formatHaving('COUNT({tag}.id) = :count_tag_id',array(':count_tag_id' => $this->param('count')));
+    }
+    $select = $sb_thread->build();
+    $list = $t_thread->fetchAll($select);
+
     $this->view->assign('list',$list);
-    
-    $array = array('check'=>(1));
-    http_build_query($array);
-    Sdx_Debug::dump(http_build_query($array));
   }
 }
