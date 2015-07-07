@@ -36,7 +36,7 @@ Class ThreadController extends Sdx_Controller_Action_Http {
         $db->rollback();
         throw $e;
       }
-    } 
+    }
   }
 
   public function menuAction() {
@@ -78,9 +78,9 @@ Class ThreadController extends Sdx_Controller_Action_Http {
             throw new Sdx_Exception("ログインしてください");
           }
           $entry
-            ->setBody($this->_getParam('body'))
-            ->setAccountId($current_account)
-            ->setThreadId($this->_getParam('thread_id'));
+                  ->setBody($this->_getParam('body'))
+                  ->setAccountId($current_account)
+                  ->setThreadId($this->_getParam('thread_id'));
           $entry->save();
           $db->commit();
           $this->redirectAfterSave('/thread/title?thread_id=' . $this->_getParam('thread_id'));
@@ -101,14 +101,14 @@ Class ThreadController extends Sdx_Controller_Action_Http {
 
     $form = new Sdx_Form();
     $form
-      ->setActionCurrentPage()
-      ->setMethodToPost();
+            ->setActionCurrentPage()
+            ->setMethodToPost();
 
     $elem = new Sdx_Form_Element_Textarea();
     $elem
-      ->setName('edit')
-      ->setLabel($entry->getBody())
-      ->addValidator(new Sdx_Validate_NotEmpty());
+            ->setName('edit')
+            ->setLabel($entry->getBody())
+            ->addValidator(new Sdx_Validate_NotEmpty());
     $form->setElement($elem);
     $form->bind($entry->toArray());
 
@@ -131,33 +131,40 @@ Class ThreadController extends Sdx_Controller_Action_Http {
       }
     }
     $this->view->assign('form', $form);
-    $this->view->assign('value',$entry->getThreadId());
+    $this->view->assign('value', $entry->getThreadId());
   }
-  
-  public function ajaxtestAction(){
+
+  public function ajaxthreadlistAction() {
     $t_tag = Bd_Orm_Main_Tag::createTable();
     $select = $t_tag->select();
-    $list = $t_tag->fetchAll($select);
-    $this->view->assign('list',$list);
+    $taglist = $t_tag->fetchAll($select);
+    $this->view->assign('taglist', $taglist);
+    
+    $t_thread = Bd_Orm_Main_Thread::createTable();
+    $select = $t_thread->select();
+    $threadlist = $t_thread->fetchAll($select);
+    $this->view->assign('threadlist', $threadlist);
+    
   }
-  
-  public function ajaxlisttestAction(){   
+
+  public function ajaxlistAction() {    
     $t_thread = Bd_Orm_Main_Thread::createTable();
     $sb_thread = $t_thread->createSelectBuilder();
-    
-    if($this->param('search')){
-      $sb_thread->addWhere('title',$this->param('search'));
+
+    if ($this->param('tag')) {
+      $sb_thread->thread_tag->tag->innerJoinChain();
+      $sb_thread->thread_tag->tag->addWhere('id', $this->param('tag'));
+      $sb_thread->thread_tag->tag->group('id');
+      $sb_thread->builder()->formatHaving('COUNT({tag}.id) = :count_tag_id', array(':count_tag_id'=>count('check')));
     }
-    
-    if($this->param('tag')){
-    $sb_thread->thread_tag->tag->innerJoinChain();
-    $sb_thread->thread_tag->tag->addWhere('id',$this->param('tag'));
-    $sb_thread->thread_tag->tag->group('id');
-    $sb_thread->builder()->formatHaving('COUNT({tag}.id) = :count_tag_id',array(':count_tag_id' => $this->param('count')));
+
+    if ($this->param('title')) {
+      $sb_thread->builder()->format('title like :like_title',array(':like_title'=>'%'.$this->param('title').'%'));
     }
+
     $select = $sb_thread->build();
     $list = $t_thread->fetchAll($select);
-
-    $this->view->assign('list',$list);
+    
+    $this->view->assign('list', $list);
   }
 }

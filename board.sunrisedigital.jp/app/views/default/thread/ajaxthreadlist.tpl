@@ -2,50 +2,55 @@
 {block title}Thread検索{/block}
 {block js}
   <script>
-    $(function () {  
-      function countChecked(){
-        var count = $("input:checked").length;
-        return count;
-      }
-      countChecked();
-      $(":checkbox").click(countChecked);
-
-      $("button[type=submit]").click(
-          function () {
-            var tag = $('[class = "tag"]:checked').map(function () {
-              return $(this).val();
-            }).get();
-            var str = $("#texttest").val();
-            var countcheck = countChecked();
-            console.log(tag)
-            $.ajax({
-              url: '/thread/ajaxlisttest',
+    $(function () {
+      var title;
+      var tag;
+      
+      function updateList(titlename,threadname){
+        $.ajax({
+              url: '/thread/ajaxlist',
               traditional: true,
               data: {
-                search: str,
-                tag: tag,
-                count: countcheck
+                title: titlename,
+                tag: threadname
               },
               success: function (data) {
-                $('#jquery-sample-ajax').html(data);
+                $('#thread-list').html(data);
               },
               error: function (data) {
-                $('#jquery-sample-textStatus').text('読み込み失敗');
+                alert("error");
               }
             });
+      }
+      
+      $("#text").keyup(
+          function () {
+            title = $("#text").val();            
+            updateList(title,tag);
           });
           
-          $("button[type=reset]").click(
+
+      $(":checkbox").click(
           function () {
-            $("input:checked").prop('checked',false);
+            tag = $('[class = "tag"]:checked').map(function () {
+              return $(this).val();
+            }).get();
+            updateList(title,tag);
+          });
+
+      $("button[type=reset]").click(
+          function () {
+            $("#text").val("");
+            $("input:checked").prop('checked', false);
+            
             $.ajax({
-              url: '/thread/ajaxlisttest',
+              url: '/thread/ajaxlist',
               traditional: true,
               success: function (data) {
-                $('#jquery-sample-ajax').html(data);
+                $('#thread-list').html(data);
               },
               error: function (data) {
-                $('#jquery-sample-textStatus').text('読み込み失敗');
+                alert("error");
               }
             });
           });
@@ -56,22 +61,40 @@
 {block main_contents}
   <div class="panel panel-default">
     <div class="panel panel-body">
-      <div id="jquery-sample">
-        <p>
-          <input type="text" class="form-control" id="texttest"/>
-        </p>
-        <p>
-          {foreach $list as $tag}
+      <p>
+        <input type="text" class="form-control" id="text"/>
+      </p>
+      <p>
+        {foreach $taglist as $tag}
           <input type="checkbox" class="tag" value="{$tag->getId()}">{$tag->getName()}
-          {/foreach}
-        </p>
-        <p>
-          <button type="reset" class="text-left btn btn-danger">リセット</button> 
-          <button type="submit" class="btn btn-primary text-center">検索</button>
-          <span id="jquery-sample-textStatus"></span>
-        </p>
-        <div id="jquery-sample-ajax"></div>
+        {/foreach}
+      </p>
+      <div id="thread-list">
+        <div class="panel panel-default">
+          <div class="panel panel-heading">Thread一覧</div>
+          <div class="panel panel-body">
+            <table class="table">
+              <tr>
+                <th>ID</th>
+                <th>タイトル</th>
+                <th>ジャンル</th>
+                <th>登録日時</th>
+              </tr>
+              {foreach $threadlist as $thread}
+                <tr>
+                  <td>{$thread->getId()}</td>
+                  <td><a href="/thread/title?thread_id={$thread->getId()}">{$thread->getTitle()}</a></td>
+                  <td>{$thread->getGenre()->getName()}</td>
+                  <td>{$thread->getCreateAt()}</td>
+                </tr>
+              {/foreach}
+            </table>
+          </div>
+        </div>
       </div>
+      <p>
+        <button type="reset" class="text-left btn btn-danger">リセット</button> 
+      </p>
     </div>
   </div>
 {/block}
