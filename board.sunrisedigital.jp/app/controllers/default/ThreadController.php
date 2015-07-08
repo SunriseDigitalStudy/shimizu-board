@@ -134,17 +134,16 @@ Class ThreadController extends Sdx_Controller_Action_Http {
     $this->view->assign('value', $entry->getThreadId());
   }
 
-  public function ajaxthreadlistAction() {
+  public function ajaxthreadlistAction() {  
     $t_tag = Bd_Orm_Main_Tag::createTable();
-    $select = $t_tag->select();
-    $taglist = $t_tag->fetchAll($select);
+    $tagselect = $t_tag->select();
+    $taglist = $t_tag->fetchAll($tagselect);
     $this->view->assign('taglist', $taglist);
     
     $t_thread = Bd_Orm_Main_Thread::createTable();
-    $select = $t_thread->select();
-    $threadlist = $t_thread->fetchAll($select);
+    $threadselect = $t_thread->select();
+    $threadlist = $t_thread->fetchAll($threadselect);
     $this->view->assign('threadlist', $threadlist);
-    
   }
 
   public function ajaxlistAction() {    
@@ -155,7 +154,8 @@ Class ThreadController extends Sdx_Controller_Action_Http {
       $sb_thread->thread_tag->tag->innerJoinChain();
       $sb_thread->thread_tag->tag->addWhere('id', $this->param('tag'));
       $sb_thread->thread_tag->tag->group('id');
-      $sb_thread->builder()->formatHaving('COUNT({tag}.id) = :count_tag_id', array(':count_tag_id'=>count('check')));
+      $sb_thread->builder()->formatHaving('COUNT({tag}.id) = :count_tag_id', array(':count_tag_id' =>count($this->param('tag'))));
+      
     }
 
     if ($this->param('title')) {

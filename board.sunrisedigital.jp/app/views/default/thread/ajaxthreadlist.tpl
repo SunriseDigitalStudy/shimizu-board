@@ -6,54 +6,42 @@
       var title;
       var tag;
       
-      function updateList(titlename,threadname){
+      function updateList(titleName,tagId){
         $.ajax({
-              url: '/thread/ajaxlist',
-              traditional: true,
-              data: {
-                title: titlename,
-                tag: threadname
-              },
-              success: function (data) {
-                $('#thread-list').html(data);
-              },
-              error: function (data) {
-                alert("error");
-              }
-            });
+          url: '/thread/ajaxlist',
+          data: {
+            title: titleName,
+            tag: tagId
+          },
+          success: function (data) {
+            $('#thread-list').html(data);
+          },
+          error: function (data) {
+            alert("error");
+          }
+        });
       }
       
       $("#text").keyup(
-          function () {
-            title = $("#text").val();            
-            updateList(title,tag);
-          });
-          
-
+        function () {
+          title = $("#text").val();            
+          updateList(title,tag);
+        });
+      
       $(":checkbox").click(
-          function () {
-            tag = $('[class = "tag"]:checked').map(function () {
-              return $(this).val();
-            }).get();
-            updateList(title,tag);
-          });
+        function () {
+          tag = $('[class = "tag"]:checked').map(function () {
+            return $(this).val();
+          }).get();
+          updateList(title,tag);
+        });
 
       $("button[type=reset]").click(
-          function () {
-            $("#text").val("");
-            $("input:checked").prop('checked', false);
-            
-            $.ajax({
-              url: '/thread/ajaxlist',
-              traditional: true,
-              success: function (data) {
-                $('#thread-list').html(data);
-              },
-              error: function (data) {
-                alert("error");
-              }
-            });
-          });
+        function () {
+          $("#text").val("");
+          $("input:checked").prop('checked', false);
+          updateList();
+        });
     });
   </script>
 {/block}
