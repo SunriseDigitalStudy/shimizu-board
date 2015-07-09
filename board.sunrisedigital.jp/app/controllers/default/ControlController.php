@@ -282,7 +282,6 @@ class ControlController extends Sdx_Controller_Action_Http {
     $record_count = $t_thread->select()->countRow();
     $pager = new Sdx_Pager(5, $record_count);
     $pager->setPage($this->param('page'));
-    $pager->enablePageIdAdjuster();
 
     $this->view->assign("pager", $pager);
   }
