@@ -274,8 +274,7 @@ class ControlController extends Sdx_Controller_Action_Http {
 
   function newthreadAction() {
     $t_thread = Bd_Orm_Main_Thread::createTable();
-    $select = $t_thread->select();
-    $select->limitPage($this->param('page'), 5);
+    $select = $t_thread->select()->limitPage($this->param('page'), 5);
     $list = $t_thread->fetchAll($select);
 
     $this->view->assign("list", $list);
