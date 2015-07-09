@@ -27,10 +27,13 @@
       {/if}
       <div class="text-center">
         {if $current_page > $pager->getFirstPageId()}
-          <a href="/control/newthread?page={$pager->getPrevPageId()}"><<前の5件</a>
+          <a href="/control/newthread?page={$pager->getFirstPageId()}"><button class="btn btn-default"><i class="glyphicon glyphicon-step-backward"></i></button></a>
+          <a href="/control/newthread?page={$pager->getPrevPageId()}"><button class="btn btn-default"><i class="glyphicon glyphicon-chevron-left"></i></button></a>
         {/if}
+        {$current_page}
         {if $current_page < $pager->getLastPageId()}
-          <a href="/control/newthread?page={$pager->getNextPageId()}">次の5件>></a>
+          <a href="/control/newthread?page={$pager->getNextPageId()}"><button class="btn btn-default"><i class="glyphicon glyphicon-chevron-right"></i></button></a>
+          <a href="/control/newthread?page={$pager->getLastPageId()}"><button class="btn btn-default"><i class="glyphicon glyphicon-step-forward"></i></button></a>
         {/if}
       </div>
     </div>
