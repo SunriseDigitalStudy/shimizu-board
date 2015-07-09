@@ -60,7 +60,7 @@ list:
 #    filter: Bd_Scaffold_Filter_Thread
     
     #1ページの数を指定。省略すると全件表示される
-    per_page: 10
+    per_page: 5
     
     #リストを取得するメソッドを指定。並び順の変更はこれを利用
     #ここに指定するメソッドは必ず$selectを引数に受け取って取得に利用
@@ -77,7 +77,7 @@ list:
 #    item_heading: default/thread/list-heading.tpl
 #    item_footer: default/thread/list-footer.tpl
     
-#    prevent_delete: true
+    prevent_delete: true
     
     #表示設定
     display:
@@ -106,8 +106,8 @@ list:
         - label: 登録日時
           column: create_at
           
-        - label: 削除
-          action: delete
+#        - label: 削除
+#          action: delete
  
 #grouping:
 ##    表示名
