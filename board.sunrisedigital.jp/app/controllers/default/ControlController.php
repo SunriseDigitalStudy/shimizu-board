@@ -273,16 +273,21 @@ class ControlController extends Sdx_Controller_Action_Http {
 //    }
 
   function newthreadAction() {
-    $t_thread = Bd_Orm_Main_Tag::createTable();
-    $select = $t_thread->select()->limitPage($this->param('page'),5);
+    $t_thread = Bd_Orm_Main_Thread::createTable();
+    $select = $t_thread->select();
+    $select->limitPage($this->param('page'), 5);
     $list = $t_thread->fetchAll($select);
 
     $this->view->assign("list", $list);
 
-    $recordcount = $t_thread->select()->countRow();
-    $pager = new Sdx_Pager(5,$recordcount);
+    $record_count = $t_thread->select()->countRow();
+    $pager = new Sdx_Pager(5, $record_count);
     $pager->setPage($this->param('page'));
+//    $pager->enablePageIdAdjuster();
+    Sdx_Debug::dump($pager->getPage(),"test");
+    if($pager->getPage() > $pager->getLastPageId()){
+      Sdx_Debug::dump($pager->getPage(),"if");
+    }
     $this->view->assign("pager", $pager);
   }
-
 }
