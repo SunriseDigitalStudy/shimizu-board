@@ -5,13 +5,15 @@
     $(function () {
       var title;
       var tag;
+      var page = {$pager->getPage()};
       
-      function updateList(titleName,tagId){
+      function updateList(titleName,tagId,pagenumber){
         $.ajax({
           url: '/thread/ajaxlist',
           data: {
             title: titleName,
-            tag: tagId
+            tag: tagId ,
+            page: pagenumber
           },
           success: function (data) {
             $('#thread-list').html(data);
@@ -25,7 +27,8 @@
       $("#text").keyup(
         function () {
           title = $("#text").val();            
-          updateList(title,tag);
+          updateList(title,tag,page);
+          page = 1;
         });
       
       $(":checkbox").click(
@@ -33,7 +36,8 @@
           tag = $('[class = "tag"]:checked').map(function () {
             return $(this).val();
           }).get();
-          updateList(title,tag);
+          page = 1;
+          updateList(title,tag,page);
         });
 
       $("button[type=reset]").click(
@@ -42,6 +46,20 @@
           $("input:checked").prop('checked', false);
           updateList();
         });
+        
+      $("#prevpage").click(
+        function(){
+          page= page - 1;
+          console.log(page);
+          updateList(title,tag,page);        
+      });
+      
+      $("#nextpage").click(
+        function(){     
+          page= page + 1;
+          console.log(page);
+          updateList(title,tag,page);
+      });
     });
   </script>
 {/block}
@@ -83,6 +101,11 @@
       <p>
         <button type="reset" class="text-left btn btn-danger">リセット</button> 
       </p>
+      <div class="text-center">
+{*        {$pager->getPrevLink('前の5件') nofilter}*}
+        <button class="btn panel-default" id="prevpage" type="button">前の5件</button>
+        <button class="btn panel-default" id="nextpage" type="button">次の5件</button>
+      </div>
     </div>
   </div>
 {/block}
