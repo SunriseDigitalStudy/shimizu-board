@@ -20,6 +20,10 @@
           </tr>
         {/foreach}
       </table>
+      <div class="text-center">
+        {$pager->getPrevLink('前の5件') nofilter}
+        {$pager->getNextLink('次の5件') nofilter}
+      </div>
     {/if}
   </div>
 </div>

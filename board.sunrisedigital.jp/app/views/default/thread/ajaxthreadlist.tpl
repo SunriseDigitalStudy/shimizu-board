@@ -5,7 +5,8 @@
     $(function () {
       var title;
       var tag;
-      var page = {$pager->getPage()};
+      var page = 1;
+      var lastpage = {$pager->getLastPageId()};
       
       function updateList(titleName,tagId,pagenumber){
         $.ajax({
@@ -13,7 +14,8 @@
           data: {
             title: titleName,
             tag: tagId ,
-            page: pagenumber
+            pid: pagenumber,
+            last: lastpage
           },
           success: function (data) {
             $('#thread-list').html(data);
@@ -49,15 +51,21 @@
         
       $("#prevpage").click(
         function(){
-          page= page - 1;
-          console.log(page);
+          if(page <= 1){
+            page = 1;
+          }else{
+            page = page - 1;            
+          }
           updateList(title,tag,page);        
       });
       
       $("#nextpage").click(
-        function(){     
-          page= page + 1;
-          console.log(page);
+        function(){   
+          if(page >= lastpage){
+            page = lastpage;
+          }else{
+            page= page + 1;
+          }
           updateList(title,tag,page);
       });
     });
@@ -87,12 +95,12 @@
                 <th>登録日時</th>
               </tr>
               {foreach $threadlist as $thread}
-                <tr>
-                  <td>{$thread->getId()}</td>
-                  <td><a href="/thread/title?thread_id={$thread->getId()}">{$thread->getTitle()}</a></td>
-                  <td>{$thread->getGenre()->getName()}</td>
-                  <td>{$thread->getCreateAt()}</td>
-                </tr>
+              <tr>
+                <td>{$thread->getId()}</td>
+                <td><a href="/thread/title?thread_id={$thread->getId()}">{$thread->getTitle()}</a></td>
+                <td>{$thread->getGenre()->getName()}</td>
+                <td>{$thread->getCreateAt()}</td>
+              </tr>
               {/foreach}
             </table>
           </div>
@@ -102,7 +110,6 @@
         <button type="reset" class="text-left btn btn-danger">リセット</button> 
       </p>
       <div class="text-center">
-{*        {$pager->getPrevLink('前の5件') nofilter}*}
         <button class="btn panel-default" id="prevpage" type="button">前の5件</button>
         <button class="btn panel-default" id="nextpage" type="button">次の5件</button>
       </div>

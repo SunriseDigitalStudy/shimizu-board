@@ -7,6 +7,7 @@
  */
 
 Class ThreadController extends Sdx_Controller_Action_Http {
+  private $_rowcount = 5;
 
   public function indexAction() {
     Sdx_Debug::dump($this->_getParam('thread_id'), 'title');
@@ -141,19 +142,22 @@ Class ThreadController extends Sdx_Controller_Action_Http {
     $this->view->assign('taglist', $taglist);
 
     $t_thread = Bd_Orm_Main_Thread::createTable();
-    $threadselect = $t_thread->select()->limitPage($this->param("page"),5);
+    $threadselect = $t_thread->select();
+    $count_record = $threadselect->countRow();
+    $threadselect ->limitPage($this->param("pid"),$this->_rowcount);
     $threadlist = $t_thread->fetchAll($threadselect);
     $this->view->assign('threadlist', $threadlist);
     
-    $pager = new Sdx_Pager(5, 11);
-    $pager->setPage($this->param('page'));
+    $pager = new Sdx_Pager($this->_rowcount,$count_record);
+    $pager->setPage($this->param('pid'));
     $this->view->assign('pager', $pager);
   }
 
   public function ajaxlistAction() {
     $t_thread = Bd_Orm_Main_Thread::createTable();
     $sb_thread = $t_thread->createSelectBuilder();
-
+    
+    
     if ($this->param('tag')) {
       $sb_thread->thread_tag->tag
                 ->innerJoinChain()
@@ -165,17 +169,18 @@ Class ThreadController extends Sdx_Controller_Action_Http {
     if ($this->param('title')) {
       $sb_thread->builder()->format('title like :like_title', array(':like_title' => '%' . $this->param('title') . '%'));
     }
-
+    
     $select = $sb_thread->build();
-    $select->limitPage($this->param('page'), 5);
-    
     $count_record = $select->countRow();
-    $pager = new Sdx_Pager(5, $count_record);
-    $pager->setPage($this->param('page'));
-    Sdx_debug::dump($pager->getPage());
-    $list = $t_thread->fetchAll($select);
+    Sdx_debug::dump($count_record);
+    $select->limitPage($this->param('pid'), $this->_rowcount);
     
-    $this->view->assign('pager', $pager);
+    $pager = new Sdx_Pager($this->_rowcount, $count_record);
+    $pager->setPage($this->param('pid'));
+    Sdx_debug::dump($pager->getLastPageId());
+    $list = $t_thread->fetchAll($select);
+
+    $this->view->assign('pager',$pager);
     $this->view->assign('list', $list);
   }
 }
