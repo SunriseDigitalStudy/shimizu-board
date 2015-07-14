@@ -8,8 +8,6 @@
 
 Class ThreadController extends Sdx_Controller_Action_Http {
 
-  private $_rowcount = 5;
-
   public function indexAction() {
     Sdx_Debug::dump($this->_getParam('thread_id'), 'title');
   }
@@ -182,7 +180,7 @@ Class ThreadController extends Sdx_Controller_Action_Http {
     $select = $sb_thread->build();
     $record_count = $select->countRow();
 
-    $pager = new Sdx_Pager($this->_rowcount, $record_count);
+    $pager = new Sdx_Pager(5, $record_count);
     $pager->setPage($this->param('pid'));
     $select->limitPager($pager);
     
