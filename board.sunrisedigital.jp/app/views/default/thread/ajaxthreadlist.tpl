@@ -3,10 +3,13 @@
 {block js}
   <script>
     $(function () {
+      var data{
+        
+      }
       var title;
       var tag;
       var page = 1;
- 
+      
       function updateList(titleName, tagId, pagenumber) {
         $.ajax({
           url: '/thread/ajaxthreadlist',
@@ -27,8 +30,8 @@
       $("#text").keyup(
           function () {
             title = $("#text").val();
-            updateList(title, tag, page);
             page = 1;
+            updateList(title, tag, page);
           });
 
       $(":checkbox").click(

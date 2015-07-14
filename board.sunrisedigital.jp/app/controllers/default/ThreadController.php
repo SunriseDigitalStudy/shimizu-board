@@ -189,4 +189,6 @@ Class ThreadController extends Sdx_Controller_Action_Http {
     $this->view->assign('pager', $pager);
     $this->view->assign('list', $list);
   }
+  public function jsontestAction(){
+  }
 }
