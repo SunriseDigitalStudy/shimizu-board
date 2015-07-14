@@ -26,15 +26,10 @@
         <p>登録がありません</p>
       {/if}
       <div class="text-center">
-        {if $current_page > $pager->getFirstPageId()}
-          <a href="/control/newthread?page={$pager->getFirstPageId()}"><button class="btn btn-default"><i class="glyphicon glyphicon-step-backward"></i></button></a>
-          <a href="/control/newthread?page={$pager->getPrevPageId()}"><button class="btn btn-default"><i class="glyphicon glyphicon-chevron-left"></i></button></a>
-        {/if}
-        {$current_page}
-        {if $current_page < $pager->getLastPageId()}
-          <a href="/control/newthread?page={$pager->getNextPageId()}"><button class="btn btn-default"><i class="glyphicon glyphicon-chevron-right"></i></button></a>
-          <a href="/control/newthread?page={$pager->getLastPageId()}"><button class="btn btn-default"><i class="glyphicon glyphicon-step-forward"></i></button></a>
-        {/if}
+        {$pager->getFirstLink("最初へ") nofilter}
+        {$pager->getPrevLink("前の5件") nofilter}
+        {$pager->getNextLink("次の5件") nofilter}
+        {$pager->getLastLink("最後へ") nofilter}
       </div>
     </div>
   </div>
