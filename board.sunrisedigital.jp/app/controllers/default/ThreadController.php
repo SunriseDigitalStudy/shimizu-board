@@ -7,6 +7,7 @@
  */
 
 Class ThreadController extends Sdx_Controller_Action_Http {
+
   private $_rowcount = 5;
 
   public function indexAction() {
@@ -136,27 +137,35 @@ Class ThreadController extends Sdx_Controller_Action_Http {
   }
 
   public function ajaxthreadlistAction() {
+    if ($this->getRequest()->isXmlHttpRequest()) {
+      $this->_forward('ajaxlist');
+      return;
+    }
+
     $t_tag = Bd_Orm_Main_Tag::createTable();
     $tagselect = $t_tag->select();
     $taglist = $t_tag->fetchAll($tagselect);
-    $this->view->assign('taglist', $taglist);
 
     $t_thread = Bd_Orm_Main_Thread::createTable();
-    $threadselect = $t_thread->select();
-    $count_record = $threadselect->countRow();
-    $threadselect ->limitPage($this->param("pid"),$this->_rowcount);
-    $threadlist = $t_thread->fetchAll($threadselect);
-    $this->view->assign('threadlist', $threadlist);
-    
-    $pager = new Sdx_Pager($this->_rowcount,$count_record);
+    $select = $t_thread->select();
+
+    $record_count = $t_thread->select()->countRow();
+    $pager = new Sdx_Pager(5, $record_count);
     $pager->setPage($this->param('pid'));
-    $this->view->assign('pager', $pager);
+    $pager->enablePageIdAdjuster();
+
+    $select->limitPager($pager);
+
+    $list = $t_thread->fetchAll($select);
+    
+    $this->view->assign('taglist', $taglist);
+    $this->view->assign("pager", $pager);
+    $this->view->assign("list", $list);
   }
 
   public function ajaxlistAction() {
     $t_thread = Bd_Orm_Main_Thread::createTable();
     $sb_thread = $t_thread->createSelectBuilder();
-    
     
     if ($this->param('tag')) {
       $sb_thread->thread_tag->tag
@@ -169,18 +178,17 @@ Class ThreadController extends Sdx_Controller_Action_Http {
     if ($this->param('title')) {
       $sb_thread->builder()->format('title like :like_title', array(':like_title' => '%' . $this->param('title') . '%'));
     }
-    
+
     $select = $sb_thread->build();
-    $count_record = $select->countRow();
-    Sdx_debug::dump($count_record);
-    $select->limitPage($this->param('pid'), $this->_rowcount);
-    
-    $pager = new Sdx_Pager($this->_rowcount, $count_record);
+    $record_count = $select->countRow();
+
+    $pager = new Sdx_Pager($this->_rowcount, $record_count);
     $pager->setPage($this->param('pid'));
-    Sdx_debug::dump($pager->getLastPageId());
+    $select->limitPager($pager);
+    
     $list = $t_thread->fetchAll($select);
 
-    $this->view->assign('pager',$pager);
+    $this->view->assign('pager', $pager);
     $this->view->assign('list', $list);
   }
 }

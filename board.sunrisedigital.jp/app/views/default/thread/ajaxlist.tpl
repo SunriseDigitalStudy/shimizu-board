@@ -4,7 +4,7 @@
     {if $list->isEmpty() === true}
       <p>一致する検索結果はありません</p>
     {else}
-      <table class="table">
+      <table class="table" data-lastpageid="{$pager->getLastPageId()}">
         <tr>
           <th>ID</th>
           <th>タイトル</th>
@@ -20,10 +20,6 @@
           </tr>
         {/foreach}
       </table>
-      <div class="text-center">
-        {$pager->getPrevLink('前の5件') nofilter}
-        {$pager->getNextLink('次の5件') nofilter}
-      </div>
     {/if}
   </div>
 </div>
