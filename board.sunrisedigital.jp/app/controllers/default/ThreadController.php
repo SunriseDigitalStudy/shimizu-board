@@ -144,7 +144,7 @@ Class ThreadController extends Sdx_Controller_Action_Http {
     $tagselect = $t_tag->select();
     $taglist = $t_tag->fetchAll($tagselect);
 
-    $a_list = $this->acquisition_list();
+    $a_list = $this->acquisition_list_and_pager();
     
     $this->view->assign('taglist', $taglist);
     $this->view->assign("list", $a_list[0]);
@@ -152,28 +152,26 @@ Class ThreadController extends Sdx_Controller_Action_Http {
   }
 
   public function ajaxlistAction() {
-    $a_list = $this->acquisition_list($this->param("table"),  $this->param("tag"));
+    $a_list = $this->acquisition_list_and_pager($this->param("title"),  $this->param("tag"));
 
     $this->view->assign('list', $a_list[0]);
     $this->view->assign('pager', $a_list[1]);
   }
   
-  public function acquisition_list($search_title = NULL ,$serach_tags = NULL){
+  public function acquisition_list_and_pager($search_title = NULL ,$serach_tags = NULL){
     $t_thread = Bd_Orm_Main_Thread::createTable();
     $sb_thread = $t_thread->createSelectBuilder();
-    
-    if ($search_title) {
-      $sb_thread->builder()->format('title like :like_title', array(':like_title' => '%' . $this->param('title') . '%'));
-    }
     
     if ($serach_tags) {
       $sb_thread->thread_tag->tag
                 ->innerJoinChain()
-                ->addWhere('id', $this->param('tag'));
+                ->addWhere('id', $serach_tags);
       $sb_thread->group('id');
-      $sb_thread->builder()->formatHaving('COUNT({tag}.id) = :count_tag_id', array(':count_tag_id' => count($this->param('tag'))));
+      $sb_thread->builder()->formatHaving('COUNT({tag}.id) = :count_tag_id', array(':count_tag_id' => count($serach_tags)));
     }
 
+    $sb_thread->addLike('title', '%'.$search_title.'%');
+    
     $select = $sb_thread->build();
     $record_count = $select->countRow();
 
