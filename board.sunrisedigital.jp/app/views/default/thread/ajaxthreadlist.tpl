@@ -9,7 +9,7 @@
         $.ajax({
           url: '/thread/ajaxlist',
           data:{
-            title: $(search_text).val(),
+            title: search_text.val(),
             tag: $('.tag:checked').map(function(){
             return $(this).val();}).get(),
             pid: page ? page : 1
