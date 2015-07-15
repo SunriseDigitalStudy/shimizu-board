@@ -185,8 +185,6 @@ Class ThreadController extends Sdx_Controller_Action_Http {
     $select->limitPager($pager);
     
     $list = $t_thread->fetchAll($select);
-    
-    Sdx_Debug::dump($pager->lastPageId());
 
     $this->view->assign('pager', $pager);
     $this->view->assign('list', $list);
@@ -194,10 +192,19 @@ Class ThreadController extends Sdx_Controller_Action_Http {
   public function jsontestAction(){
     $this->_disableViewRenderer();
     
-    $testlist = array(array('id'=>'1','title'=>'test1','ジャンル'=>'test','登録日'=>'0000-00-00'),
-     array('id'=>'2','title'=>'test2','ジャンル'=>'check','登録日'=>'0000-00-00'));
-    Sdx_Debug::dump($testlist,"list");
-    Sdx_Debug::dump(json_encode($testlist),"json");
+    $t_thread = Bd_Orm_Main_Thread::createTable();
+    $list = $t_thread->fetchAll();
     
+    foreach ($list as $array) {
+      $array_test[] = array(array('id'=>$array->getId(),'title'=>$array->getTitle(),
+          'ジャンル'=>$array->getGenre()->getId(),'登録日'=>'0000-00-00'));
+    }
+    $test = json_encode($array_test);
+    
+    header("Context-Type: application/json");
+    echo "<body><h3>$test</h3></body><p><body>htmlcheck</body></p>";
+    
+    Sdx_Debug::dump(json_encode($array_test),"json");
+    Sdx_Debug::dump($array_test,"list");
   }
 }
