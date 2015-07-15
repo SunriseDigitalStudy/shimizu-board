@@ -1,5 +1,4 @@
 <div class="panel panel-default">
-  <div class="panel panel-heading">Thread一覧</div>
   <div class="panel panel-body">
     {if $list->isEmpty() === true}
       <p>一致する検索結果はありません</p>

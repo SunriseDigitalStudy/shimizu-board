@@ -3,70 +3,56 @@
 {block js}
   <script>
     $(function () {
-      var title;
-      var tag;
-      var page = 1;
- 
-      function updateList(titleName, tagId, pagenumber) {
+      function updateList(page){
+        var panelBody = '.panel-body';
+        var search_text = $('#text');
         $.ajax({
-          url: '/thread/ajaxthreadlist',
-          data: {
-            title: titleName,
-            tag: tagId,
-            pid: pagenumber
-          },
-          success: function (data) {
-            $('.panel-body').html($(data).find(".panel-body").html());
-          },
-          error: function (data) {
-            alert("error");
+          url: '/thread/ajaxlist',
+          data:{
+            title: $(search_text).val(),
+            tag: $('.tag:checked').map(function(){
+            return $(this).val();}).get(),
+            pid: page ? page : 1
           }
+        }).done(function(responce_data){
+          $(panelBody).html($(responce_data).find(panelBody).html());
+        }).fail(function(responce_data){
+          alert("error");
         });
       }
 
-      $("#text").keyup(
-          function () {
-            title = $("#text").val();
-            updateList(title, tag, page);
-            page = 1;
-          });
+      $("#text").keyup(function () {
+        updateList();
+      });
 
-      $(":checkbox").click(
-          function () {
-            tag = $('[class = "tag"]:checked').map(function () {
-              return $(this).val();
-            }).get();
-            page = 1;
-            updateList(title, tag, page);
-          });
-
-      $("button[type=reset]").click(
-          function () {
-            $("#text").val("");
-            $("input:checked").prop('checked', false);
-            updateList();
-          });
-
-      $("#prevpage").click(
-          function () {
-            if (page <= 1) {
-              page = 1;
-            } else {
-              page = page - 1;
-            }
-            updateList(title, tag, page);
-          });
-
-      $("#nextpage").click(
-          function () {
-          lastpage = $(".table").data("lastpageid");
-          if (page >= lastpage) {
-            page = lastpage;
-          } else {
-            page = page + 1;
-          }
-          updateList(title, tag, page);
+      $(":checkbox").change(function () {
+          updateList();
         });
+
+      $("button[type=reset]").click(function () {
+        $("#text").val("");
+        $("input:checked").prop('checked', false);
+        updateList();
+      });
+
+      $("#prevpage").click(function () {
+        if (page <= 1) {
+          page = 1;
+        }else {
+          page = page - 1;
+        }
+        updateList();
+      });
+
+      $("#nextpage").click(function () {
+        lastpage = $(".table").data("lastpageid");
+        if (page >= lastpage) {
+          page = lastpage;
+        } else {
+          page = page + 1;
+        }
+          updateList();
+      });
     });
   </script>
 {/block}
@@ -103,6 +89,7 @@
         </table>
       {/if}
     </div>
+    <button class="btn btn-danger" type="reset">リセット</button>
     <div class="text-center">
       {$pager->getPrevLink('前の5件') nofilter}
       {$pager->getNextLink('次の5件') nofilter}
