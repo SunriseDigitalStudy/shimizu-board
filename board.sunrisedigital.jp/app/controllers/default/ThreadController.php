@@ -185,10 +185,19 @@ Class ThreadController extends Sdx_Controller_Action_Http {
     $select->limitPager($pager);
     
     $list = $t_thread->fetchAll($select);
+    
+    Sdx_Debug::dump($pager->lastPageId());
 
     $this->view->assign('pager', $pager);
     $this->view->assign('list', $list);
   }
   public function jsontestAction(){
+    $this->_disableViewRenderer();
+    
+    $testlist = array(array('id'=>'1','title'=>'test1','ジャンル'=>'test','登録日'=>'0000-00-00'),
+     array('id'=>'2','title'=>'test2','ジャンル'=>'check','登録日'=>'0000-00-00'));
+    Sdx_Debug::dump($testlist,"list");
+    Sdx_Debug::dump(json_encode($testlist),"json");
+    
   }
 }

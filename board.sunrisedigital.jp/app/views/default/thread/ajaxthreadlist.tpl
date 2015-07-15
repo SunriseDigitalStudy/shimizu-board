@@ -3,9 +3,6 @@
 {block js}
   <script>
     $(function () {
-      var data{
-        
-      }
       var title;
       var tag;
       var page = 1;
