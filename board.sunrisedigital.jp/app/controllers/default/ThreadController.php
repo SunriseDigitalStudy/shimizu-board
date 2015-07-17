@@ -190,7 +190,6 @@ Class ThreadController extends Sdx_Controller_Action_Http {
     $this->view->assign('list', $list);
   }
   public function jsontestAction(){
-    $this->_disableViewRenderer();
     
     $t_thread = Bd_Orm_Main_Thread::createTable();
     $list = $t_thread->fetchAll();
@@ -201,6 +200,10 @@ Class ThreadController extends Sdx_Controller_Action_Http {
     }
     $test = json_encode($array_test);
     
-    $this->view->assign("json_test",$test);
+    header("Context-Type: application/json");
+//    echo $test;
+     
+//    Sdx_Debug::dump(json_encode($array_test),"json");
+//    Sdx_Debug::dump($array_test,"list");
   }
 }

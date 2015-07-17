@@ -3,22 +3,18 @@
 <script>
   $(function () {
       $.ajax({
-        url: "/thread/jsontest",
- {*       dataType:"json"*}
-      }).done(function(data){
-        console.log("in");
-        alert("success");          
-      }).fail(function(data){
-        alert("fail");
-      });
+              url: '/thread/jsontest'
+            }).done(function(responce_data){
+              $(".testShow").html("<h1>test</h1>");
+            }).fail(function(responce_data){
+              alert("error");
+            });
   });
   
-{*  $.getJSON({$test})
-    ]};*}
 </script>
 {/block}
 {block main_contents}
 <div class="testShow">
-  <p>表示確認</p>
+  <p></p>
 </div>
 {/block}
