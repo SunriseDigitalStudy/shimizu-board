@@ -3,10 +3,11 @@
 {block js}
   <script>
     $(function () {      
-      var page = 1;
+      var page = $(".table").data("currentpageid");
       function getFormData(){
         var search_text = $('#text');
         var tagIds_checked = $('.tag:checked');
+        console.log("現在のページ:"+page);
         return {
           title: search_text.val(),
           tag: tagIds_checked.map(function(){
@@ -36,24 +37,61 @@
               url: '/thread/ajaxthreadlist',
               data: newData
             }).done(function(responce_data){
+              console.log("updatelistの最後のページ:"+lastPage);
               console.log(newData);
               $(panelBody).html(responce_data);
+              judgeprevPage();
+              judgenextPage();
             }).fail(function(responce_data){
               alert("error");
             });
           }
         },300);
       }
+      
+      function judgeprevPage(){
+        if (page <　1) {
+          page = 1;
+          divclass.addClass('has-next');
+          divclass.removeClass('has-prev');
+        } else {
+          if($(".table").data('has-prev') === 1){
+            divclass.addClass('has-prev');
+          }else{
+            divclass.removeClass('has-prev');
+          }
+        }
+        return this;
+      }
+      
+      function judgenextPage(){
+        var lastPageId = $(".table").data("lastpageid");
+        if (page > lastPageId) {
+          page = lastPageId;
+          divclass.removeClass('has-next');
+          divclass.addClass('has-prev');
+        } else {
+          if ($(".table").data("has-next") === 1) {
+            divclass.addClass('has-next');
+          } else {
+            divclass.removeClass('has-next');
+          }
+        } 
+        return this;
+       }
 
       $("#text").keyup(function () {
-        updateList();
+        //強制的に1ページに戻すために代入。ここで代入しないとページングをしてから検索した場合、直前にいたpidでページが呼ばれてしまう
+        page = 1;
+        updateList(page);
       });
       
+      var lastPage;
       $(":checkbox").change(function () {
-        var hasNextId = $(".table").data("has-next");
-        console.log("cb次のページがあるか:"+hasNextId);
-        console.log("cblastpage"+lastPage);
-        updateList();
+        //lastPage = $(".table").data("lastpageid");
+        //強制的に1ページに戻すために代入。ここで代入しないとページングをしてから検索した場合、直前にいたpidでページが呼ばれてしまう
+        page = 1;
+        updateList(page);
       });
 
       $("button[type=reset]").click(function () {
@@ -64,43 +102,24 @@
      
       var divclass = $('.text-center');
       $("#prevpage").click(function () {
+        console.log("最初にいたページ:"+page);
         divclass.removeClass('has-prev has-next');
         page = page - 1;
-        var hasprevId = $(".table").data('has-prev');
-        console.log(hasprevId);
-        if (page <= 1) {
-          page = 1;
-          divclass.addClass('has-next');
-          divclass.removeClass('has-prev');
-        } else {
-          if(hasprevId === 1){
-            divclass.addClass('has-prev has-next');
-          }
-        }
+        
         
         updateList(page);
+        console.log("今いるページ:"+page);
       });
       
-      
-      var lastPage = $(".table").data("lastpageid");
+
       $("#nextpage").click(function () {
-        var hasNextId = $(".table").data("has-next");
+        console.log("最初にいたページ:"+page);
+        
         divclass.removeClass('has-prev has-next');
-        page = page + 1;
-        console.log("次のページがあるか:"+hasNextId);
-        console.log("nblastpage:"+lastPage);
-        console.log("currentpage:"+page);
-        if (page >= lastPage) {
-          page = lastPage;
-          divclass.removeClass('has-next');
-          divclass.addClass('has-prev');
-        } else {
-          if(hasNextId === 1){
-            divclass.addClass('has-prev has-next');
-          }
-        }
+        page = page + 1;        
 
         updateList(page);
+        console.log("今いるページ:"+page);
       });
     });
   </script>
