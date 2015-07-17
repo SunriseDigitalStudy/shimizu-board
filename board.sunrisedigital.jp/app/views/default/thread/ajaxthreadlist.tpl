@@ -7,7 +7,6 @@
       function getFormData(){
         var search_text = $('#text');
         var tagIds_checked = $('.tag:checked');
-        console.log("現在のページ:"+page);
         return {
           title: search_text.val(),
           tag: tagIds_checked.map(function(){
