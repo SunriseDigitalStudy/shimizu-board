@@ -37,8 +37,6 @@
               url: '/thread/ajaxthreadlist',
               data: newData
             }).done(function(responce_data){
-              console.log("updatelistの最後のページ:"+lastPage);
-              console.log(newData);
               $(panelBody).html(responce_data);
               judgeprevPage();
               judgenextPage();
@@ -102,24 +100,18 @@
      
       var divclass = $('.text-center');
       $("#prevpage").click(function () {
-        console.log("最初にいたページ:"+page);
         divclass.removeClass('has-prev has-next');
         page = page - 1;
         
-        
         updateList(page);
-        console.log("今いるページ:"+page);
       });
       
 
-      $("#nextpage").click(function () {
-        console.log("最初にいたページ:"+page);
-        
+      $("#nextpage").click(function () {        
         divclass.removeClass('has-prev has-next');
         page = page + 1;        
 
         updateList(page);
-        console.log("今いるページ:"+page);
       });
     });
   </script>
