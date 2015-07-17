@@ -201,10 +201,6 @@ Class ThreadController extends Sdx_Controller_Action_Http {
     }
     $test = json_encode($array_test);
     
-    header("Context-Type: application/json");
-    echo "<body><h3>$test</h3></body><p><body>htmlcheck</body></p>";
-    
-    Sdx_Debug::dump(json_encode($array_test),"json");
-    Sdx_Debug::dump($array_test,"list");
+    $this->view->assign("json_test",$test);
   }
 }
