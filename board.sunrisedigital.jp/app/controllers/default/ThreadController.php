@@ -153,7 +153,7 @@ Class ThreadController extends Sdx_Controller_Action_Http {
 
   public function ajaxlistAction() {
     $a_list = $this->acquisition_list_and_pager($this->param("title"),  $this->param("tag"));
-
+    
     $this->view->assign('list', $a_list[0]);
     $this->view->assign('pager', $a_list[1]);
   }

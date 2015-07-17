@@ -2,8 +2,8 @@
 {block title}Thread検索{/block}
 {block js}
   <script>
-    $(function () {
-      var page;
+    $(function () {      
+      var page = 1;
       function getFormData(){
         var search_text = $('#text');
         var tagIds_checked = $('.tag:checked');
@@ -26,15 +26,17 @@
       var currentData = getFormData();
       function updateList(page){
         clearTimeout(timeout);
+        
         var timeout = setTimeout(function(){
           var panelBody = '.panel-body';
           var newData = getFormData();
-          if(isUpdateData(currentData,newData)){
+          if(isUpdateData(currentData,newData) === true){
             currentData = newData;
             $.ajax({
-              url: '/thread/ajaxlist',
+              url: '/thread/ajaxthreadlist',
               data: newData
             }).done(function(responce_data){
+              console.log(newData);
               $(panelBody).html(responce_data);
             }).fail(function(responce_data){
               alert("error");
@@ -46,9 +48,12 @@
       $("#text").keyup(function () {
         updateList();
       });
-
+      
       $(":checkbox").change(function () {
-          updateList();
+        var hasNextId = $(".table").data("has-next");
+        console.log("cb次のページがあるか:"+hasNextId);
+        console.log("cblastpage"+lastPage);
+        updateList();
       });
 
       $("button[type=reset]").click(function () {
@@ -59,34 +64,42 @@
      
       var divclass = $('.text-center');
       $("#prevpage").click(function () {
-        page = page - 1;
-        console.log(page);
         divclass.removeClass('has-prev has-next');
-        hasprevId = $(".table").data('has-prev');
+        page = page - 1;
+        var hasprevId = $(".table").data('has-prev');
+        console.log(hasprevId);
         if (page <= 1) {
           page = 1;
           divclass.addClass('has-next');
           divclass.removeClass('has-prev');
         } else {
-          divclass.addClass('has-prev has-next');
-        }
-        updateList(page);
-      });
-      
-      hasnextPageId = $('table').data('has-next');
-      $("#nextpage").click(function () {
-        divclass.removeClass('has-prev has-next');
-        page = page + 1;
-        lastpage = $(".table").data("lastpageid");
-        page = lastpage;
-        if (page >= lastpage) {
-          divclass.removeClass('has-next');
-          divclass.addClass('has-prev');
-        } else {
-          if(hasnextPageId === 1){
+          if(hasprevId === 1){
             divclass.addClass('has-prev has-next');
           }
         }
+        
+        updateList(page);
+      });
+      
+      
+      var lastPage = $(".table").data("lastpageid");
+      $("#nextpage").click(function () {
+        var hasNextId = $(".table").data("has-next");
+        divclass.removeClass('has-prev has-next');
+        page = page + 1;
+        console.log("次のページがあるか:"+hasNextId);
+        console.log("nblastpage:"+lastPage);
+        console.log("currentpage:"+page);
+        if (page >= lastPage) {
+          page = lastPage;
+          divclass.removeClass('has-next');
+          divclass.addClass('has-prev');
+        } else {
+          if(hasNextId === 1){
+            divclass.addClass('has-prev has-next');
+          }
+        }
+
         updateList(page);
       });
     });
@@ -104,26 +117,7 @@
     </p>
     <div class="panel panel-heading">Thread一覧</div>
     <div class="panel panel-body">
-      {if $list->isEmpty() === true}
-        <p>一致する検索結果はありません</p>
-      {else}
-        <table class="table" data-has-next="{if $pager->hasNextPage()}1{/if}">
-          <tr>
-            <th>ID</th>
-            <th>タイトル</th>
-            <th>ジャンル</th>
-            <th>登録日時</th>
-          </tr>
-          {foreach $list as $thread}
-            <tr>
-              <td>{$thread->getId()}</td>
-              <td><a href="/thread/title?thread_id={$thread->getId()}">{$thread->getTitle()}</a></td>
-              <td>{$thread->getGenre()->getName()}</td>
-              <td>{$thread->getCreateAt()}</td>
-            </tr>
-          {/foreach}
-        </table>
-      {/if}
+      {include file = "default/thread/ajaxlist.tpl"}
     </div>
     <button class="btn btn-danger" type="reset">リセット</button>
     <div class="text-center has-next">
