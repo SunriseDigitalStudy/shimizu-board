@@ -189,21 +189,19 @@ Class ThreadController extends Sdx_Controller_Action_Http {
     $this->view->assign('pager', $pager);
     $this->view->assign('list', $list);
   }
-  public function jsontestAction(){
-    
+  public function jsontestAction(){ 
+//    $this->_disableViewRenderer();
     $t_thread = Bd_Orm_Main_Thread::createTable();
     $list = $t_thread->fetchAll();
     
     foreach ($list as $array) {
-      $array_test[] = array(array('id'=>$array->getId(),'title'=>$array->getTitle(),
+      $threadDataArray[] = array(array('id'=>$array->getId(),'title'=>$array->getTitle(),
           'ジャンル'=>$array->getGenre()->getId(),'登録日'=>'0000-00-00'));
     }
-    $test = json_encode($array_test);
+
+    $jsonData = json_encode($threadDataArray);
     
-    header("Context-Type: application/json");
-//    echo $test;
-     
-//    Sdx_Debug::dump(json_encode($array_test),"json");
-//    Sdx_Debug::dump($array_test,"list");
+    $this->view->assign("jsonData",$jsonData);
+    
   }
 }
