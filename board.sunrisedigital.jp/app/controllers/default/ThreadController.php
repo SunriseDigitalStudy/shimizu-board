@@ -189,9 +189,13 @@ Class ThreadController extends Sdx_Controller_Action_Http {
     $this->view->assign('pager', $pager);
     $this->view->assign('list', $list);
   }
-  public function jsondatalistAction(){ 
+  public function jsondatalistAction(){
     $t_thread = Bd_Orm_Main_Thread::createTable();
     $list = $t_thread->fetchAll();
+    
+    $t_tag = Bd_Orm_Main_Tag::createTable();
+    $tagselect = $t_tag->select();
+    $taglist = $t_tag->fetchAll($tagselect);
     
     foreach ($list as $array) {
       $threadDataArray[] = array('id'=>$array->getId(),'title'=>$array->getTitle(),
@@ -201,5 +205,6 @@ Class ThreadController extends Sdx_Controller_Action_Http {
     $jsonEncodeArray = json_encode($threadDataArray);
     
     $this->view->assign("jsonEncodeData",$jsonEncodeArray);
+    $this->view->assign('taglist', $taglist);
   }
 }
