@@ -195,13 +195,13 @@ Class ThreadController extends Sdx_Controller_Action_Http {
     $list = $t_thread->fetchAll();
     
     foreach ($list as $array) {
-      $threadDataArray[] = array(array('id'=>$array->getId(),'title'=>$array->getTitle(),
-          'ジャンル'=>$array->getGenre()->getId(),'登録日'=>'0000-00-00'));
+      $threadDataArray[] = array('id'=>$array->getId(),'title'=>$array->getTitle(),
+          'ジャンル'=>$array->getGenre()->getName(),'登録日'=>'0000-00-00');
     }
+    Sdx_Debug::dump($threadDataArray);
 
     $jsonData = json_encode($threadDataArray);
     
     $this->view->assign("jsonData",$jsonData);
-    
   }
 }

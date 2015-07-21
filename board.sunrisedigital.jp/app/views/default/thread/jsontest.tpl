@@ -2,8 +2,6 @@
 {block js append}
 <script>
   $(function () {
-    var jsonData = JSON.parse($('table').attr('data-jsonTest'));
-    console.log(jsonData);
     $.ajax({
       url: '/thread/jsontest' ,
 {*      data: {
@@ -12,7 +10,11 @@
         pagenum: page
       }*}
     }).done(function(responceData){
-      $(".table").html("<tr><th>ID</th><th>タイトル</th><th>ジャンル</th><th>登録日時</th></tr><tr><td>a</td><td>b</td><td>c</td><td>d</td></tr>");
+      var jsonObject = JSON.parse($('table').attr('data-jsonTest'));
+      $(".table").append("<tr><th>ID</th><th>タイトル</th><th>ジャンル</th><th>登録日時</th></tr>");
+      for(var i in jsonObject){
+        $(".table").append("<tr><td>"+jsonObject[i].id+"</td><td>"+jsonObject[i].title+"</td><td>"+jsonObject[i].ジャンル+"</td><td>"+jsonObject[i].登録日+"</td></tr>");
+      }
     }).fail(function(responceData){
       alert("error");
     });
@@ -23,7 +25,6 @@
   <div class="panel panel-default">
     <div class="panel panel-heading">JSONテスト</div>
     <div class="panel panel-body">
-     {$jsonData}
       <table class="table" data-jsonTest={$jsonData}>
       </table>
     </div>
