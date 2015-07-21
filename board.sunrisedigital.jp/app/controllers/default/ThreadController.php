@@ -189,8 +189,7 @@ Class ThreadController extends Sdx_Controller_Action_Http {
     $this->view->assign('pager', $pager);
     $this->view->assign('list', $list);
   }
-  public function jsontestAction(){ 
-//    $this->_disableViewRenderer();
+  public function jsondatalistAction(){ 
     $t_thread = Bd_Orm_Main_Thread::createTable();
     $list = $t_thread->fetchAll();
     
@@ -198,10 +197,9 @@ Class ThreadController extends Sdx_Controller_Action_Http {
       $threadDataArray[] = array('id'=>$array->getId(),'title'=>$array->getTitle(),
           'ジャンル'=>$array->getGenre()->getName(),'登録日'=>'0000-00-00');
     }
-    Sdx_Debug::dump($threadDataArray);
-
-    $jsonData = json_encode($threadDataArray);
     
-    $this->view->assign("jsonData",$jsonData);
+    $jsonEncodeArray = json_encode($threadDataArray);
+    
+    $this->view->assign("jsonEncodeData",$jsonEncodeArray);
   }
 }
