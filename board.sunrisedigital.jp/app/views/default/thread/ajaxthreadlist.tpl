@@ -103,9 +103,30 @@
         </table>
       {/if}
     </div>
-    <div class="text-center">
-      {$pager->getPrevLink('前の5件') nofilter}
-      {$pager->getNextLink('次の5件') nofilter}
+    <button class="btn btn-danger" type="reset">リセット</button>
+    <div class="text-center has-next">
+      <button class="btn btn-default" id="prevpage">前の5件</button>
+      <span class="disable_link" id='previd'>前の5件</span>
+      <button class="btn btn-default" id="nextpage">次の5件</button>
+      <span class="disable_link" id='nextid'>次の5件</span>
     </div>
+  </div>
+{/block}
+{block css}
+<style type='text/css'> 
+  .has-prev #prevpage , .has-next #nextpage{
+    visibility: visible;
+  }
+  .text-center button{
+    visibility: hidden;
+  }
+  .has-prev #previd , .has-next #nextid{
+    visibility: hidden;
+    display: none;
+  }
+  .text-center #previd{
+    visibility: visible;
+  }
+</style>
   </div>
 {/block}
