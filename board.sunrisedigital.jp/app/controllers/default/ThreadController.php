@@ -144,39 +144,34 @@ Class ThreadController extends Sdx_Controller_Action_Http {
     $tagselect = $t_tag->select();
     $taglist = $t_tag->fetchAll($tagselect);
 
-    $t_thread = Bd_Orm_Main_Thread::createTable();
-    $select = $t_thread->select();
-
-    $record_count = $t_thread->select()->countRow();
-    $pager = new Sdx_Pager(5, $record_count);
-    $pager->setPage($this->param('pid'));
-    $pager->enablePageIdAdjuster();
-
-    $select->limitPager($pager);
-
-    $list = $t_thread->fetchAll($select);
+    $a_list = $this->acquisition_list_and_pager();
     
     $this->view->assign('taglist', $taglist);
-    $this->view->assign("pager", $pager);
-    $this->view->assign("list", $list);
+    $this->view->assign("list", $a_list[0]);
+    $this->view->assign("pager", $a_list[1]);
   }
 
   public function ajaxlistAction() {
+    $a_list = $this->acquisition_list_and_pager($this->param("title"),  $this->param("tag"));
+    
+    $this->view->assign('list', $a_list[0]);
+    $this->view->assign('pager', $a_list[1]);
+  }
+  
+  public function acquisition_list_and_pager($search_title = NULL ,$serach_tags = NULL){
     $t_thread = Bd_Orm_Main_Thread::createTable();
     $sb_thread = $t_thread->createSelectBuilder();
     
-    if ($this->param('tag')) {
+    if ($serach_tags) {
       $sb_thread->thread_tag->tag
                 ->innerJoinChain()
-                ->addWhere('id', $this->param('tag'));
+                ->addWhere('id', $serach_tags);
       $sb_thread->group('id');
-      $sb_thread->builder()->formatHaving('COUNT({tag}.id) = :count_tag_id', array(':count_tag_id' => count($this->param('tag'))));
+      $sb_thread->builder()->formatHaving('COUNT({tag}.id) = :count_tag_id', array(':count_tag_id' => count($serach_tags)));
     }
 
-    if ($this->param('title')) {
-      $sb_thread->builder()->format('title like :like_title', array(':like_title' => '%' . $this->param('title') . '%'));
-    }
-
+    $sb_thread->addLike('title', '%'.$search_title.'%');
+    
     $select = $sb_thread->build();
     $record_count = $select->countRow();
 
@@ -185,8 +180,7 @@ Class ThreadController extends Sdx_Controller_Action_Http {
     $select->limitPager($pager);
     
     $list = $t_thread->fetchAll($select);
-
-    $this->view->assign('pager', $pager);
-    $this->view->assign('list', $list);
+    
+    return array($list,$pager);
   }
 }
