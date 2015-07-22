@@ -2,71 +2,116 @@
 {block title}Thread検索{/block}
 {block js}
   <script>
-    $(function () {
-      var title;
-      var tag;
-      var page = 1;
-      
-      function updateList(titleName, tagId, pagenumber) {
-        $.ajax({
-          url: '/thread/ajaxthreadlist',
-          data: {
-            title: titleName,
-            tag: tagId,
-            pid: pagenumber
-          },
-          success: function (data) {
-            $('.panel-body').html($(data).find(".panel-body").html());
-          },
-          error: function (data) {
-            alert("error");
-          }
-        });
+    $(function () {      
+      var page = $(".table").data("currentpageid");
+      function getFormData(){
+        var search_text = $('#text');
+        var tagIds_checked = $('.tag:checked');
+        return {
+          title: search_text.val(),
+          tag: tagIds_checked.map(function(){
+                 return $(this).val();}).get(),
+          pid: page ? page : 1
+        };
       }
-
-      $("#text").keyup(
-          function () {
-            title = $("#text").val();
-            page = 1;
-            updateList(title, tag, page);
-          });
-
-      $(":checkbox").click(
-          function () {
-            tag = $('[class = "tag"]:checked').map(function () {
-              return $(this).val();
-            }).get();
-            page = 1;
-            updateList(title, tag, page);
-          });
-
-      $("button[type=reset]").click(
-          function () {
-            $("#text").val("");
-            $("input:checked").prop('checked', false);
-            updateList();
-          });
-
-      $("#prevpage").click(
-          function () {
-            if (page <= 1) {
-              page = 1;
-            } else {
-              page = page - 1;
-            }
-            updateList(title, tag, page);
-          });
-
-      $("#nextpage").click(
-          function () {
-          lastpage = $(".table").data("lastpageid");
-          if (page >= lastpage) {
-            page = lastpage;
-          } else {
-            page = page + 1;
+      
+      function isUpdateData(currentData,newData){
+        if(currentData !== newData){
+          return true;
+        }else{
+          return false;
+        }
+      }
+      
+      var currentData = getFormData();
+      function updateList(page){
+        clearTimeout(timeout);
+        
+        var timeout = setTimeout(function(){
+          var panelBody = '.panel-body';
+          var newData = getFormData();
+          if(isUpdateData(currentData,newData) === true){
+            currentData = newData;
+            $.ajax({
+              url: '/thread/ajaxthreadlist',
+              data: newData
+            }).done(function(responce_data){
+              $(panelBody).html(responce_data);
+              judgeprevPage();
+              judgenextPage();
+            }).fail(function(responce_data){
+              alert("error");
+            });
           }
-          updateList(title, tag, page);
-        });
+        },300);
+      }
+      
+      function judgeprevPage(){
+        if (page <　1) {
+          page = 1;
+          divclass.addClass('has-next');
+          divclass.removeClass('has-prev');
+        } else {
+          if($(".table").data('has-prev') === 1){
+            divclass.addClass('has-prev');
+          }else{
+            divclass.removeClass('has-prev');
+          }
+        }
+        return this;
+      }
+      
+      function judgenextPage(){
+        var lastPageId = $(".table").data("lastpageid");
+        if (page > lastPageId) {
+          page = lastPageId;
+          divclass.removeClass('has-next');
+          divclass.addClass('has-prev');
+        } else {
+          if ($(".table").data("has-next") === 1) {
+            divclass.addClass('has-next');
+          } else {
+            divclass.removeClass('has-next');
+          }
+        } 
+        return this;
+       }
+
+      $("#text").keyup(function () {
+        //強制的に1ページに戻すために代入。ここで代入しないとページングをしてから検索した場合、直前にいたpidでページが呼ばれてしまう
+        page = 1;
+        updateList(page);
+      });
+      
+      var lastPage;
+      $(":checkbox").change(function () {
+        //lastPage = $(".table").data("lastpageid");
+        //強制的に1ページに戻すために代入。ここで代入しないとページングをしてから検索した場合、直前にいたpidでページが呼ばれてしまう
+        page = 1;
+        updateList(page);
+      });
+
+      $("button[type=reset]").click(function () {
+        $("#text").val("");
+        $("input:checked").prop('checked', false);
+        updateList();
+      });
+     
+      var divclass = $('.text-center');
+      $("#prevpage").click(function () {
+        divclass.removeClass('has-prev has-next');
+        page = page - 1;
+        
+        updateList(page);
+      });
+      
+
+      $("#nextpage").click(function () {        
+        divclass.removeClass('has-prev has-next');
+        page = page + 1;        
+
+        updateList(page);
+      });
     });
   </script>
 {/block}
@@ -82,26 +127,7 @@
     </p>
     <div class="panel panel-heading">Thread一覧</div>
     <div class="panel panel-body">
-      {if $list->isEmpty() === true}
-        <p>一致する検索結果はありません</p>
-      {else}
-        <table class="table">
-          <tr>
-            <th>ID</th>
-            <th>タイトル</th>
-            <th>ジャンル</th>
-            <th>登録日時</th>
-          </tr>
-          {foreach $list as $thread}
-            <tr>
-              <td>{$thread->getId()}</td>
-              <td><a href="/thread/title?thread_id={$thread->getId()}">{$thread->getTitle()}</a></td>
-              <td>{$thread->getGenre()->getName()}</td>
-              <td>{$thread->getCreateAt()}</td>
-            </tr>
-          {/foreach}
-        </table>
-      {/if}
+      {include file = "default/thread/ajaxlist.tpl"}
     </div>
     <button class="btn btn-danger" type="reset">リセット</button>
     <div class="text-center has-next">
@@ -128,5 +154,6 @@
     visibility: visible;
   }
 </style>
+<<<<<<< HEAD
   </div>
 {/block}
