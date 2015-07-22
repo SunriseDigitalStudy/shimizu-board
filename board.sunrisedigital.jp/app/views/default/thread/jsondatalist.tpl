@@ -3,22 +3,17 @@
 {block js append}
 <script>
   $(function () {
-      var title;
-      var TagIds;
-      var page = 1;
-      
-      function updateList(searchTitle,searchTagIds,page){
       $.ajax({
         url: '/thread/jsondatalist',
         datatype: 'json',
-        data: {
+        {*data: {
           title: searchTitle,
           tagid: searchTagIds,
           pagenum: page
-        }
+        }*}
       }).done(function(responceData){
         var table = $('table');
-        var jsonObject = JSON.parse(table.attr('data-jsonEncodeData'));
+        var jsonObject = JSON.parse(table.attr('data-jsonencodedata'));
         table.append("<tr><th>ID</th><th>タイトル</th><th>ジャンル</th><th>登録日時</th></tr>");
         for(var i in jsonObject){
           table.append("<tr><td>"+jsonObject[i].id+"</td>\n\
@@ -28,15 +23,6 @@
       }).fail(function(responceData){
         alert("error");
       });
-    }
-      
-      $("#text").keyup(
-        function () {
-          title = $("#text").val();
-          page = 1;
-          updateList(title, TagIds, page);
-        }
-       );
   });
 </script>
 {/block}
@@ -53,7 +39,7 @@
     </p>
     <div class="panel panel-heading">スレッド一覧</div>
     <div class="panel panel-body">
-      <table class="table" data-jsonEncodeData ={$jsonEncodeData}>
+      <table class="table" data-jsonencodedata ={$jsonEncodeData}>
       </table>
     </div>
     <button class="btn btn-danger" type="reset">リセット</button>

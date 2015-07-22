@@ -3,7 +3,7 @@
 {block js}
   <script>
     $(function () {      
-      var page = $(".table").data("currentpageid");
+      var page = $("table").data("currentpageid");
       function getFormData(){
         var search_text = $('#text');
         var tagIds_checked = $('.tag:checked');
@@ -28,18 +28,18 @@
         clearTimeout(timeout);
         
         var timeout = setTimeout(function(){
-          var panelBody = '.panel-body';
           var newData = getFormData();
           if(isUpdateData(currentData,newData) === true){
             currentData = newData;
-            $.ajax({
-              url: '/thread/ajaxthreadlist',
-              data: newData
-            }).done(function(responce_data){
-              $(panelBody).html(responce_data);
+             $.ajax({
+            url: '/thread/ajaxlist',
+            data: newData,
+            datatype: 'json'
+            }).done(function(responceData){
+              console.log(responceData);
               judgeprevPage();
               judgenextPage();
-            }).fail(function(responce_data){
+            }).fail(function(responceData){
               alert("error");
             });
           }
@@ -83,9 +83,7 @@
         updateList(page);
       });
       
-      var lastPage;
       $(":checkbox").change(function () {
-        //lastPage = $(".table").data("lastpageid");
         //強制的に1ページに戻すために代入。ここで代入しないとページングをしてから検索した場合、直前にいたpidでページが呼ばれてしまう
         page = 1;
         updateList(page);
@@ -104,7 +102,6 @@
         
         updateList(page);
       });
-      
 
       $("#nextpage").click(function () {        
         divclass.removeClass('has-prev has-next');
@@ -127,7 +124,7 @@
     </p>
     <div class="panel panel-heading">Thread一覧</div>
     <div class="panel panel-body">
-      {include file = "default/thread/ajaxlist.tpl"}
+{*      {include file = "default/thread/ajaxlist.tpl"}*}
     </div>
     <button class="btn btn-danger" type="reset">リセット</button>
     <div class="text-center has-next">
@@ -154,6 +151,4 @@
     visibility: visible;
   }
 </style>
-<<<<<<< HEAD
-  </div>
 {/block}

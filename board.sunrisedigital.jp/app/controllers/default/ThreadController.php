@@ -143,31 +143,36 @@ Class ThreadController extends Sdx_Controller_Action_Http {
     $t_tag = Bd_Orm_Main_Tag::createTable();
     $tagselect = $t_tag->select();
     $taglist = $t_tag->fetchAll($tagselect);
-
-    $a_list = $this->acquisition_list_and_pager();
+    
+    $jpObject = $this->createJsonDataAndPager($this->param("title"),  $this->param("tag"));  
+    Sdx_Debug::dump($this->param("title"));
+    $jsondata = json_encode($jpObject[0]);
+    $pagedata = json_encode($jpObject[1]);
     
     $this->view->assign('taglist', $taglist);
-    $this->view->assign("list", $a_list[0]);
-    $this->view->assign("pager", $a_list[1]);
   }
 
   public function ajaxlistAction() {
-    $a_list = $this->acquisition_list_and_pager($this->param("title"),  $this->param("tag"));
+    $this->_disableViewRenderer();
+    $jpObject = $this->createJsonDataAndPager($this->param("title"),  $this->param("tag"));  
+    $jsondata = json_encode($jpObject[0]);
     
-    $this->view->assign('list', $a_list[0]);
-    $this->view->assign('pager', $a_list[1]);
+    echo $jsondata;
+    
+    $this->view->assign("jsonEncodeData",$jsondata);
+    $this->view->assign("pager",$jpObject[1]);
   }
   
-  public function acquisition_list_and_pager($search_title = NULL ,$serach_tags = NULL){
+  public function acquisitionListAndPager($search_title = NULL ,$search_tags = NULL){
     $t_thread = Bd_Orm_Main_Thread::createTable();
     $sb_thread = $t_thread->createSelectBuilder();
     
-    if ($serach_tags) {
+    if ($search_tags) {
       $sb_thread->thread_tag->tag
                 ->innerJoinChain()
-                ->addWhere('id', $serach_tags);
+                ->addWhere('id', $search_tags);
       $sb_thread->group('id');
-      $sb_thread->builder()->formatHaving('COUNT({tag}.id) = :count_tag_id', array(':count_tag_id' => count($serach_tags)));
+      $sb_thread->builder()->formatHaving('COUNT({tag}.id) = :count_tag_id', array(':count_tag_id' => count($search_tags)));
     }
 
     $sb_thread->addLike('title', '%'.$search_title.'%');
@@ -183,22 +188,31 @@ Class ThreadController extends Sdx_Controller_Action_Http {
     
     return array($list,$pager);
   }
+  
+  public function createJsonDataAndPager($search_title = NULL ,$search_tags = NULL){
+    $list = $this->acquisitionListAndPager($search_title,$search_tags);
+    
+    foreach ($list[0] as $array) {
+      $threadDataArray[] = array('id'=>$array->getId(),'title'=>$array->getTitle(),
+          'ジャンル'=>$array->getGenre()->getName(),'登録日'=>'0000-00-00');
+    }
+       
+    $pager = $list[1];
+    
+    return array($threadDataArray,$pager);
+  }
+  
   public function jsondatalistAction(){
-    $t_tag = Bd_Orm_Main_Tag::createTable();
-    $tagselect = $t_tag->select();
-    $taglist = $t_tag->fetchAll($tagselect);
-
-    $t_thread = Bd_Orm_Main_Thread::createTable();    
+    $t_thread = Bd_Orm_Main_Thread::createTable();
     $list = $t_thread->fetchAll();
-        
+    
     foreach ($list as $array) {
       $threadDataArray[] = array('id'=>$array->getId(),'title'=>$array->getTitle(),
           'ジャンル'=>$array->getGenre()->getName(),'登録日'=>'0000-00-00');
     }
     
     $jsonEncodeArray = json_encode($threadDataArray);
-    
+    Sdx_Debug::dump($jsonEncodeArray);
     $this->view->assign("jsonEncodeData",$jsonEncodeArray);
-    $this->view->assign('taglist', $taglist);
   }
 }
