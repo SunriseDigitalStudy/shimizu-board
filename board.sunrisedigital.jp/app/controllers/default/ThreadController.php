@@ -190,13 +190,13 @@ Class ThreadController extends Sdx_Controller_Action_Http {
     $this->view->assign('list', $list);
   }
   public function jsondatalistAction(){
-    $t_thread = Bd_Orm_Main_Thread::createTable();
-    $list = $t_thread->fetchAll();
-    
     $t_tag = Bd_Orm_Main_Tag::createTable();
     $tagselect = $t_tag->select();
     $taglist = $t_tag->fetchAll($tagselect);
-    
+
+    $t_thread = Bd_Orm_Main_Thread::createTable();    
+    $list = $t_thread->fetchAll();
+        
     foreach ($list as $array) {
       $threadDataArray[] = array('id'=>$array->getId(),'title'=>$array->getTitle(),
           'ジャンル'=>$array->getGenre()->getName(),'登録日'=>'0000-00-00');

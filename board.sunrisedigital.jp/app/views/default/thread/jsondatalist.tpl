@@ -3,25 +3,40 @@
 {block js append}
 <script>
   $(function () {
-    
+      var title;
+      var TagIds;
+      var page = 1;
+      
+      function updateList(searchTitle,searchTagIds,page){
       $.ajax({
         url: '/thread/jsondatalist',
-{*      data: {
-        title: searchTitle,
-        tagid: searchTagIds,
-        pagenum: page
-      }*}
+        datatype: 'json',
+        data: {
+          title: searchTitle,
+          tagid: searchTagIds,
+          pagenum: page
+        }
       }).done(function(responceData){
-        var jsonObject = JSON.parse($('table').attr('data-jsonEncodeData'));
-       $(".table").append("<tr><th>ID</th><th>タイトル</th><th>ジャンル</th><th>登録日時</th></tr>");
-       for(var i in jsonObject){
-        $(".table").append("<tr><td>"+jsonObject[i].id+"</td>\n\
+        var table = $('table');
+        var jsonObject = JSON.parse(table.attr('data-jsonEncodeData'));
+        table.append("<tr><th>ID</th><th>タイトル</th><th>ジャンル</th><th>登録日時</th></tr>");
+        for(var i in jsonObject){
+          table.append("<tr><td>"+jsonObject[i].id+"</td>\n\
           <td><a href=/thread/title?thread_id="+jsonObject[i].id+">"+jsonObject[i].title+"</a></td>\n\
           <td>"+jsonObject[i].ジャンル+"</td><td>"+jsonObject[i].登録日+"</td></tr>");
         }
       }).fail(function(responceData){
         alert("error");
       });
+    }
+      
+      $("#text").keyup(
+        function () {
+          title = $("#text").val();
+          page = 1;
+          updateList(title, TagIds, page);
+        }
+       );
   });
 </script>
 {/block}
