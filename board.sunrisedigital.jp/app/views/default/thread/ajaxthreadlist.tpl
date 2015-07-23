@@ -43,12 +43,12 @@
               console.log(responceData);
               var table = $(".table");
               json_data_object = JSON.parse(responceData);
-              
-              if(json_data_object.length === 0){
-                prevpage,nextpage = false;
+              console.log(json_data_object);
+              if(json_data_object["thread"].length === 0){
+                prevpage = false;
+                nextpage = false;
                 table.html("<p>検索に一致するスレッドはありません</p>");
               }else{
-                  console.log("in");
                 page = json_data_object["pager"].currentpage;
                 nextpage = json_data_object["pager"].nextpage;
                 prevpage = json_data_object["pager"].prevpage;
