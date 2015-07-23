@@ -144,8 +144,6 @@ Class ThreadController extends Sdx_Controller_Action_Http {
     $tagselect = $t_tag->select();
     $taglist = $t_tag->fetchAll($tagselect);
     
-//    $jpObject = $this->createJsonDataAndPager($this->param("title"),  $this->param("tag")); 
-    
     $this->view->assign('taglist', $taglist);
   }
 
@@ -185,13 +183,24 @@ Class ThreadController extends Sdx_Controller_Action_Http {
   public function createSearchDataAndPager($search_title = NULL ,$search_tags = NULL){
     list($result_list,$pager) = $this->createResultListAndPager($search_title,$search_tags);
     
+//    foreach ($result_list as $array) {
+//      $record_pager_list[] = array('id'=>$array->getId(),'title'=>$array->getTitle(),'ジャンル'=>$array->getGenre()->getName(),
+//          '登録日'=>'0000-00-00','currentpage'=>$pager->getPage(),
+//          'lastpage'=>$pager->getLastPageId(),'nextpage'=>$pager->hasNextPage(),'prevpage'=>$pager->hasPrevPage());
+//    }     
+//    $record_pager_list = array();
+    
     foreach ($result_list as $array) {
-      $thread_data_array[] = array('id'=>$array->getId(),'title'=>$array->getTitle(),'ジャンル'=>$array->getGenre()->getName(),
-          '登録日'=>'0000-00-00','currentpage'=>$pager->getPage(),
-          'lastpage'=>$pager->getLastPageId(),'nextpage'=>$pager->hasNextPage(),'prevpage'=>$pager->hasPrevPage());
+      $thread_data_array[] = array('id'=>$array->getId(),'title'=>$array->getTitle(),'ジャンル'=>$array->getGenre()->getName(),'登録日'=>'0000-00-00');
     }
-       
-    return $thread_data_array;
+   
+    $pager_data = array('currentpage'=>$pager->getPage(),'lastpage'=>$pager->getLastPageId(),'nextpage'=>$pager->hasNextPage(),'prevpage'=>$pager->hasPrevPage());
+    
+    $record_pager_list = array('thread'=>$thread_data_array,'pager'=>$pager_data);
+      
+//    $record_pager_list = array($thread_data_array,$pager_data);
+    return $record_pager_list;
+    
   }
   
   public function jsondatalistAction(){

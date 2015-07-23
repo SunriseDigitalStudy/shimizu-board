@@ -3,7 +3,7 @@
 {block js}
   <script>
     $(function () {
-      var page = 0;
+      var page = 1;
 
       function getFormData(){
         var search_text = $('#text');
@@ -40,21 +40,28 @@
               data: new_data,
               datatype: 'json'
             }).done(function(responceData){
-              var json_data_object = JSON.parse(responceData);
-              page = json_data_object[0].currentpage;
-              nextpage = json_data_object[0].nextpage;
-              prevpage = json_data_object[0].prevpage;
-              lastpage = json_data_object[0].lastpage;
-              
+              console.log(responceData);
               var table = $(".table");
-              table.html("<tr><th>ID</th><th>タイトル</th><th>ジャンル</th><th>登録日時</th></tr>");
-              for(var i in json_data_object){
-                table.append("<tr><td>"+json_data_object[i].id+"</td><td><a href=/thread/title?thread_id="+json_data_object[i].id+">"+json_data_object[i].title+
-                    "</a></td><td>"+json_data_object[i].ジャンル+"</td><td>"+json_data_object[i].登録日+"</td></tr>");
-              }
+              json_data_object = JSON.parse(responceData);
               
-              judgePrevPage();
-              judgeNextPage();
+              if(json_data_object.length === 0){
+                prevpage,nextpage = false;
+                table.html("<p>検索に一致するスレッドはありません</p>");
+              }else{
+                  console.log("in");
+                page = json_data_object["pager"].currentpage;
+                nextpage = json_data_object["pager"].nextpage;
+                prevpage = json_data_object["pager"].prevpage;
+                lastpage = json_data_object["pager"].lastpage;
+              
+                table.html("<tr><th>ID</th><th>タイトル</th><th>ジャンル</th><th>登録日時</th></tr>");
+                for(var i in json_data_object["thread"]){
+                  table.append("<tr><td>"+json_data_object["thread"][i].id+"</td><td><a href=/thread/title?thread_id="+json_data_object["thread"][i].id+">"+json_data_object["thread"][i].title+
+                    "</a></td><td>"+json_data_object["thread"][i].ジャンル+"</td><td>"+json_data_object["thread"][i].登録日+"</td></tr>");
+                }
+              }
+                judgePrevPage();
+                judgeNextPage();
             }).fail(function(responceData){
               alert("error");
             });
