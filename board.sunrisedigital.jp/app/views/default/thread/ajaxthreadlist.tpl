@@ -2,8 +2,9 @@
 {block title}Thread検索{/block}
 {block js}
   <script>
-    $(function () {      
-      var page = $("table").data("currentpageid");
+    $(function () {
+      var page = 0;
+
       function getFormData(){
         var search_text = $('#text');
         var tagIds_checked = $('.tag:checked');
@@ -15,30 +16,45 @@
         };
       }
       
-      function isUpdateData(currentData,newData){
-        if(currentData !== newData){
+      function isUpdateData(current_data,new_data){
+        if(current_data !== new_data){
           return true;
         }else{
           return false;
         }
       }
       
-      var currentData = getFormData();
+      var current_data = getFormData();
+      var nextpage;
+      var prevpage;
+      var lastpage;
       function updateList(page){
         clearTimeout(timeout);
         
         var timeout = setTimeout(function(){
-          var newData = getFormData();
-          if(isUpdateData(currentData,newData) === true){
-            currentData = newData;
-             $.ajax({
-            url: '/thread/ajaxlist',
-            data: newData,
-            datatype: 'json'
+          var new_data = getFormData();
+          if(isUpdateData(current_data,new_data) === true){
+            current_data = new_data;
+            $.ajax({
+              url: '/thread/ajaxlist',
+              data: new_data,
+              datatype: 'json'
             }).done(function(responceData){
-              console.log(responceData);
-              judgeprevPage();
-              judgenextPage();
+              var json_data_object = JSON.parse(responceData);
+              page = json_data_object[0].currentpage;
+              nextpage = json_data_object[0].nextpage;
+              prevpage = json_data_object[0].prevpage;
+              lastpage = json_data_object[0].lastpage;
+              
+              var table = $(".table");
+              table.html("<tr><th>ID</th><th>タイトル</th><th>ジャンル</th><th>登録日時</th></tr>");
+              for(var i in json_data_object){
+                table.append("<tr><td>"+json_data_object[i].id+"</td><td><a href=/thread/title?thread_id="+json_data_object[i].id+">"+json_data_object[i].title+
+                    "</a></td><td>"+json_data_object[i].ジャンル+"</td><td>"+json_data_object[i].登録日+"</td></tr>");
+              }
+              
+              judgePrevPage();
+              judgeNextPage();
             }).fail(function(responceData){
               alert("error");
             });
@@ -46,13 +62,13 @@
         },300);
       }
       
-      function judgeprevPage(){
+      function judgePrevPage(){
         if (page <　1) {
           page = 1;
           divclass.addClass('has-next');
           divclass.removeClass('has-prev');
         } else {
-          if($(".table").data('has-prev') === 1){
+          if(prevpage === true){
             divclass.addClass('has-prev');
           }else{
             divclass.removeClass('has-prev');
@@ -61,14 +77,13 @@
         return this;
       }
       
-      function judgenextPage(){
-        var lastPageId = $(".table").data("lastpageid");
-        if (page > lastPageId) {
-          page = lastPageId;
+      function judgeNextPage(){
+        if (page > lastpage) {
+          page = lastpage;
           divclass.removeClass('has-next');
           divclass.addClass('has-prev');
         } else {
-          if ($(".table").data("has-next") === 1) {
+          if (nextpage === true) {
             divclass.addClass('has-next');
           } else {
             divclass.removeClass('has-next');
@@ -103,7 +118,7 @@
         updateList(page);
       });
 
-      $("#nextpage").click(function () {        
+      $("#nextpage").click(function () {
         divclass.removeClass('has-prev has-next');
         page = page + 1;        
 
@@ -124,7 +139,7 @@
     </p>
     <div class="panel panel-heading">Thread一覧</div>
     <div class="panel panel-body">
-{*      {include file = "default/thread/ajaxlist.tpl"}*}
+      <table class="table"></table>
     </div>
     <button class="btn btn-danger" type="reset">リセット</button>
     <div class="text-center has-next">

@@ -144,26 +144,19 @@ Class ThreadController extends Sdx_Controller_Action_Http {
     $tagselect = $t_tag->select();
     $taglist = $t_tag->fetchAll($tagselect);
     
-    $jpObject = $this->createJsonDataAndPager($this->param("title"),  $this->param("tag"));  
-    Sdx_Debug::dump($this->param("title"));
-    $jsondata = json_encode($jpObject[0]);
-    $pagedata = json_encode($jpObject[1]);
+//    $jpObject = $this->createJsonDataAndPager($this->param("title"),  $this->param("tag")); 
     
     $this->view->assign('taglist', $taglist);
   }
 
   public function ajaxlistAction() {
     $this->_disableViewRenderer();
-    $jpObject = $this->createJsonDataAndPager($this->param("title"),  $this->param("tag"));  
-    $jsondata = json_encode($jpObject[0]);
+    $json_and_pager_object = $this->createSearchDataAndPager($this->param("title"),  $this->param("tag"));  
     
-    echo $jsondata;
-    
-    $this->view->assign("jsonEncodeData",$jsondata);
-    $this->view->assign("pager",$jpObject[1]);
+    $this->jsonResponse($json_and_pager_object);
   }
   
-  public function acquisitionListAndPager($search_title = NULL ,$search_tags = NULL){
+  public function createResultListAndPager($search_title = NULL ,$search_tags = NULL){
     $t_thread = Bd_Orm_Main_Thread::createTable();
     $sb_thread = $t_thread->createSelectBuilder();
     
@@ -189,17 +182,16 @@ Class ThreadController extends Sdx_Controller_Action_Http {
     return array($list,$pager);
   }
   
-  public function createJsonDataAndPager($search_title = NULL ,$search_tags = NULL){
-    $list = $this->acquisitionListAndPager($search_title,$search_tags);
+  public function createSearchDataAndPager($search_title = NULL ,$search_tags = NULL){
+    list($result_list,$pager) = $this->createResultListAndPager($search_title,$search_tags);
     
-    foreach ($list[0] as $array) {
-      $threadDataArray[] = array('id'=>$array->getId(),'title'=>$array->getTitle(),
-          'ジャンル'=>$array->getGenre()->getName(),'登録日'=>'0000-00-00');
+    foreach ($result_list as $array) {
+      $thread_data_array[] = array('id'=>$array->getId(),'title'=>$array->getTitle(),'ジャンル'=>$array->getGenre()->getName(),
+          '登録日'=>'0000-00-00','currentpage'=>$pager->getPage(),
+          'lastpage'=>$pager->getLastPageId(),'nextpage'=>$pager->hasNextPage(),'prevpage'=>$pager->hasPrevPage());
     }
        
-    $pager = $list[1];
-    
-    return array($threadDataArray,$pager);
+    return $thread_data_array;
   }
   
   public function jsondatalistAction(){
@@ -207,12 +199,11 @@ Class ThreadController extends Sdx_Controller_Action_Http {
     $list = $t_thread->fetchAll();
     
     foreach ($list as $array) {
-      $threadDataArray[] = array('id'=>$array->getId(),'title'=>$array->getTitle(),
+      $thread_data_array[] = array('id'=>$array->getId(),'title'=>$array->getTitle(),
           'ジャンル'=>$array->getGenre()->getName(),'登録日'=>'0000-00-00');
     }
     
-    $jsonEncodeArray = json_encode($threadDataArray);
-    Sdx_Debug::dump($jsonEncodeArray);
-    $this->view->assign("jsonEncodeData",$jsonEncodeArray);
+    $json_encode_array = json_encode($thread_data_array);
+    $this->view->assign("json_encode_data",$json_encode_array);
   }
 }
