@@ -187,7 +187,7 @@ Class ThreadController extends Sdx_Controller_Action_Http {
     $thread_data_array = array();
     
     foreach ($result_list as $array) {
-      $thread_data_array[] = array('id'=>$array->getId(),'title'=>$array->getTitle(),'ジャンル'=>$array->getGenre()->getName(),'登録日'=>'0000-00-00');
+      $thread_data_array[] = array('id'=>$array->getId(),'title'=>$array->getTitle(),'genre'=>$array->getGenre()->getName(),'create'=>'0000-00-00');
     }
     
     $pager_data = array('currentpage'=>$pager->getPage(),'lastpage'=>$pager->getLastPageId(),'nextpage'=>$pager->hasNextPage(),'prevpage'=>$pager->hasPrevPage());
@@ -204,7 +204,7 @@ Class ThreadController extends Sdx_Controller_Action_Http {
     
     foreach ($list as $array) {
       $thread_data_array[] = array('id'=>$array->getId(),'title'=>$array->getTitle(),
-          'ジャンル'=>$array->getGenre()->getName(),'登録日'=>'0000-00-00');
+          'genre'=>$array->getGenre()->getName(),'create'=>'0000-00-00');
     }
     
     $json_encode_array = json_encode($thread_data_array);

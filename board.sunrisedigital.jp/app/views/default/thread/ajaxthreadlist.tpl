@@ -40,28 +40,34 @@
               data: new_data,
               datatype: 'json'
             }).done(function(responceData){
-              console.log(responceData);
               var table = $(".table");
-              json_data_object = JSON.parse(responceData);
-              console.log(json_data_object);
-              if(json_data_object["thread"].length === 0){
+              jsonObject = JSON.parse(responceData);
+              $(".td-holder").html("");
+              $(".no-record").html("");
+              
+              if(jsonObject["thread"].length === 0){
                 prevpage = false;
                 nextpage = false;
-                table.html("<p>検索に一致するスレッドはありません</p>");
+                $(".no-record").html("<p>検索に一致するスレッドはありません</p>");
               }else{
-                page = json_data_object["pager"].currentpage;
-                nextpage = json_data_object["pager"].nextpage;
-                prevpage = json_data_object["pager"].prevpage;
-                lastpage = json_data_object["pager"].lastpage;
-              
-                table.html("<tr><th>ID</th><th>タイトル</th><th>ジャンル</th><th>登録日時</th></tr>");
-                for(var i in json_data_object["thread"]){
-                  table.append("<tr><td>"+json_data_object["thread"][i].id+"</td><td><a href=/thread/title?thread_id="+json_data_object["thread"][i].id+">"+json_data_object["thread"][i].title+
-                    "</a></td><td>"+json_data_object["thread"][i].ジャンル+"</td><td>"+json_data_object["thread"][i].登録日+"</td></tr>");
+                page = jsonObject["pager"].currentpage;
+                nextpage = jsonObject["pager"].nextpage;
+                prevpage = jsonObject["pager"].prevpage;
+                lastpage = jsonObject["pager"].lastpage;
+                
+                for(var i in jsonObject["thread"]){
+                  var thread_template = $('#thread-item').text();
+                  $.each(['id','title','genre','create'],function(){
+                    var key = this;
+                    {literal}
+                      thread_template = thread_template.split("{"+ key +"}").join(jsonObject["thread"][i][key]);
+                    {/literal}
+                  });
+                  table.append(thread_template);
                 }
               }
-                judgePrevPage();
-                judgeNextPage();
+              judgePrevPage();
+              judgeNextPage();
             }).fail(function(responceData){
               alert("error");
             });
@@ -146,7 +152,25 @@
     </p>
     <div class="panel panel-heading">Thread一覧</div>
     <div class="panel panel-body">
-      <table class="table"></table>
+      <div class="no-record"></div>
+      <table class="table">
+        <tr>
+          <th>ID</th>
+          <th>タイトル</th>
+          <th>ジャンル</th>
+          <th>登録日時</th>
+        </tr>
+        <script type="text/html" id="thread-item">
+          <tr class="td-holder">
+          {literal}
+            <td>{id}</td>
+            <td><a href="/thread/title?thread_id={id}">{title}</a></td>
+            <td>{genre}</td>
+            <td>{create}</td>
+          {/literal}  
+          </tr>
+        </script>
+      </table>
     </div>
     <button class="btn btn-danger" type="reset">リセット</button>
     <div class="text-center has-next">
