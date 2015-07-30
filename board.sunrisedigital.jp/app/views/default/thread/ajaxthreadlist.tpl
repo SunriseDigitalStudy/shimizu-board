@@ -42,8 +42,8 @@
             }).done(function(responceData){
               var table = $(".table");
               jsonObject = JSON.parse(responceData);
-              $(".td-holder").html("");
-              $(".no-record").html("");
+              $(".td-holder").empty();
+              $(".no-record").empty();
               
               if(jsonObject["thread"].length === 0){
                 prevpage = false;
